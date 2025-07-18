@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cartão Corporativo - Technology</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .chart-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .timeline-section {
+            padding: 30px;
+        }
+
+        .timeline-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .timeline-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .timeline-container {
+            position: relative;
+            height: 400px;
+        }
+
+        .table-section {
+            padding: 30px;
+        }
+
+        .table-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .table-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #f8f9fa;
+            color: #2c3e50;
+            font-weight: 600;
+            padding: 12px 8px;
+            text-align: left;
+            border-bottom: 2px solid #dee2e6;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        .profissional {
+            font-weight: 600;
+            color: #1976d2;
+        }
+
+        .data {
+            white-space: nowrap;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .movimentacao {
+            max-width: 180px;
+            word-wrap: break-word;
+            font-size: 12px;
+        }
+
+        .valor-usd {
+            text-align: right;
+            font-weight: 600;
+            color: #2e7d32;
+            font-size: 12px;
+        }
+
+        .valor-brl {
+            text-align: right;
+            font-weight: 600;
+            color: #1565c0;
+            font-size: 12px;
+        }
+
+        .empty-cell {
+            color: #999;
+            font-style: italic;
+        }
+
+        .top-services {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .service-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+
+        .service-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .service-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .service-count {
+            font-size: 12px;
+            color: #7f8c8d;
+        }
+
+        .service-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #27ae60;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>📊 Dashboard Cartão Corporativo</h1>
+            <p>Technology Department | Jorge Jamil | Jun-Jul 2025</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💳</div>
+                <div class="stat-value">73</div>
+                <div class="stat-label">Transações</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div class="stat-value">R$ 34.2K</div>
+                <div class="stat-label">Total Gasto (BRL)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">💵</div>
+                <div class="stat-value">$ 4.1K</div>
+                <div class="stat-label">Total Gasto (USD)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📈</div>
+                <div class="stat-value">R$ 469</div>
+                <div class="stat-label">Média por Transação</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🤖</div>
+                <div class="stat-value">45%</div>
+                <div class="stat-label">Gastos com IA</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value">31</div>
+                <div class="stat-label">Dias de Atividade</div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-card">
+                <h3>📊 Gastos por Categoria</h3>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>📈 Evolução Temporal dos Gastos</h3>
+                <div class="chart-container">
+                    <canvas id="timelineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="timeline-section">
+            <div class="timeline-card">
+                <h3>🏆 Top 10 Serviços Mais Utilizados</h3>
+                <div class="top-services">
+                    <div class="service-item">
+                        <div class="service-name">ANTHROPIC: CLAUDE TEAM</div>
+                        <div class="service-count">18 transações</div>
+                        <div class="service-value">R$ 5,847.30</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">ABACUS.AI</div>
+                        <div class="service-count">15 transações</div>
+                        <div class="service-value">R$ 2,156.71</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">CURSOR, AI POWERED IDE</div>
+                        <div class="service-count">7 transações</div>
+                        <div class="service-value">R$ 2,374.87</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">OPENAI</div>
+                        <div class="service-count">5 transações</div>
+                        <div class="service-value">R$ 3,988.02</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">MERLIN</div>
+                        <div class="service-count">6 transações</div>
+                        <div class="service-value">R$ 1,599.30</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">BOLT (BY STACKBLITZ)</div>
+                        <div class="service-count">2 transações</div>
+                        <div class="service-value">R$ 6,870.74</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">WWW.PERPLEXITY.AI</div>
+                        <div class="service-count">3 transações</div>
+                        <div class="service-value">R$ 549.51</div>
+                    </div>
+                    <div class="service-item">
+                        <div class="service-name">MICROSOFT</div>
+                        <div class="service-count">4 transações</div>
+                        <div class="service-value">R$ 1,981.50</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <div class="table-card">
+                <h3>📋 Histórico Completo de Transações</h3>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Serviço</th>
+                                <th>USD</th>
+                                <th>BRL</th>
+                                <th>Categoria</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTable">
+                            <!-- Dados serão inseridos via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados das transações
+        const transactions = [
+            { date: '05.06.2025', service: 'BOLT (BY STACKBLITZ)', usd: '$330.53', brl: 'R$1,956.74', category: 'Desenvolvimento' },
+            { date: '05.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL121.76', brl: 'R$128.52', category: 'IA' },
+            { date: '05.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL120.66', brl: 'R$127.40', category: 'IA' },
+            { date: '05.06.2025', service: 'CHECKR, INC CHECKR.COM', usd: '$166.44', brl: 'R$985.32', category: 'Ferramentas' },
+            { date: '05.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$59.20', category: 'IA' },
+            { date: '05.06.2025', service: 'ABACUS.AI', usd: '$20.00', brl: 'R$118.40', category: 'IA' },
+            { date: '05.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$59.20', category: 'IA' },
+            { date: '06.06.2025', service: 'ABACUS.AI', usd: '$20.00', brl: 'R$118.80', category: 'IA' },
+            { date: '06.06.2025', service: 'SURFERSEO.COM', usd: '$219.00', brl: 'R$1,300.86', category: 'Marketing' },
+            { date: '07.06.2025', service: 'HUGGINGFACE', usd: '$60.00', brl: 'R$356.40', category: 'IA' },
+            { date: '09.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL101.22', brl: 'R$107.44', category: 'IA' },
+            { date: '09.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL101.12', brl: 'R$107.38', category: 'IA' },
+            { date: '10.06.2025', service: 'MIRO.COM', usd: '$120.00', brl: 'R$704.40', category: 'Colaboração' },
+            { date: '10.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL95.73', brl: 'R$101.26', category: 'IA' },
+            { date: '10.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$58.70', category: 'IA' },
+            { date: '11.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$58.60', category: 'IA' },
+            { date: '12.06.2025', service: 'MERCADOLIVRE*RELOGIOSJU', usd: '-', brl: 'R$88.93', category: 'Outros' },
+            { date: '12.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL84.29', brl: 'R$89.63', category: 'IA' },
+            { date: '13.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL79.94', brl: 'R$85.08', category: 'IA' },
+            { date: '16.06.2025', service: 'DIDWW', usd: '$50.00', brl: 'R$292.00', category: 'Telefonia' },
+            { date: '18.06.2025', service: 'MERLIN', usd: '$1.98', brl: 'R$11.50', category: 'IA' },
+            { date: '20.06.2025', service: 'ANTHROPIC', usd: '$25.00', brl: 'R$146.25', category: 'IA' },
+            { date: '20.06.2025', service: 'MERLIN', usd: '$0.76', brl: 'R$4.45', category: 'IA' },
+            { date: '21.06.2025', service: 'MERLIN', usd: '$228.00', brl: 'R$1,333.80', category: 'IA' },
+            { date: '22.06.2025', service: 'BOLT (BY STACKBLITZ)', usd: '$840.00', brl: 'R$4,914.00', category: 'Desenvolvimento' },
+            { date: '22.06.2025', service: 'WWW.PERPLEXITY.AI', usd: '$20.00', brl: 'R$117.00', category: 'IA' },
+            { date: '23.06.2025', service: 'CURSOR, AI POWERED IDE', usd: '$40.00', brl: 'R$233.20', category: 'Desenvolvimento' },
+            { date: '23.06.2025', service: 'CURSOR, AI POWERED IDE', usd: '$200.00', brl: 'R$1,166.00', category: 'Desenvolvimento' },
+            { date: '23.06.2025', service: 'CURSOR, AI POWERED IDE', usd: '$39.99', brl: 'R$233.14', category: 'Desenvolvimento' },
+            { date: '23.06.2025', service: 'CURSOR, AI POWERED IDE', usd: '$40.00', brl: 'R$233.20', category: 'Desenvolvimento' },
+            { date: '23.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$58.30', category: 'IA' },
+            { date: '24.06.2025', service: 'MERCADOPAGO*ALPHACAMP', usd: '-', brl: 'R$125.61', category: 'Outros' },
+            { date: '24.06.2025', service: 'CURSOR, AI POWERED IDE', usd: '$38.68', brl: 'R$224.73', category: 'Desenvolvimento' },
+            { date: '24.06.2025', service: 'OPENAI', usd: '$92.04', brl: 'R$534.75', category: 'IA' },
+            { date: '25.06.2025', service: 'WWW.PERPLEXITY.AI', usd: '$35.74', brl: 'R$209.79', category: 'IA' },
+            { date: '25.06.2025', service: 'DOCKER, INC.', usd: '$11.00', brl: 'R$64.57', category: 'Desenvolvimento' },
+            { date: '26.06.2025', service: 'PPRO*MICROSOFT', usd: '-', brl: 'R$136.90', category: 'Cloud' },
+            { date: '26.06.2025', service: 'ABACUS.AI', usd: '$21.00', brl: 'R$122.85', category: 'IA' },
+            { date: '26.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$58.50', category: 'IA' },
+            { date: '26.06.2025', service: 'OPENAI', usd: '$93.62', brl: 'R$547.68', category: 'IA' },
+            { date: '26.06.2025', service: 'PADDLE.NET* N8N CLOUD1', usd: 'BRL375.00', brl: 'R$398.44', category: 'Automação' },
+            { date: '27.06.2025', service: 'ZAPIER.COM/CHARGE', usd: 'BRL584.04', brl: 'R$617.24', category: 'Automação' },
+            { date: '27.06.2025', service: 'ABACUS.AI', usd: '$20.00', brl: 'R$116.00', category: 'IA' },
+            { date: '27.06.2025', service: 'MERLIN', usd: '$15.35', brl: 'R$89.03', category: 'IA' },
+            { date: '27.06.2025', service: 'DIDWW', usd: '$50.00', brl: 'R$290.00', category: 'Telefonia' },
+            { date: '28.06.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL3,262.68', brl: 'R$3,467.30', category: 'IA' },
+            { date: '29.06.2025', service: 'MERLIN', usd: '$14.18', brl: 'R$82.24', category: 'IA' },
+            { date: '29.06.2025', service: 'WWW.PERPLEXITY.AI', usd: '$38.40', brl: 'R$222.72', category: 'IA' },
+            { date: '30.06.2025', service: 'ANTHROPIC', usd: '$64.00', brl: 'R$368.64', category: 'IA' },
+            { date: '30.06.2025', service: 'ABACUS.AI', usd: '$8.66', brl: 'R$49.88', category: 'IA' },
+            { date: '30.06.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$57.60', category: 'IA' },
+            { date: '30.06.2025', service: 'OPENAI *CHATGPT SUBSCR', usd: '$293.09', brl: 'R$1,688.20', category: 'IA' },
+            { date: '30.06.2025', service: 'OPENAI *CHATGPT SUBSCR', usd: '$120.00', brl: 'R$691.20', category: 'IA' },
+            { date: '30.06.2025', service: 'MERLIN', usd: '$13.59', brl: 'R$78.28', category: 'IA' },
+            { date: '01.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL148.27', brl: 'R$158.03', category: 'IA' },
+            { date: '01.07.2025', service: 'ABACUS.AI', usd: '$10.00', brl: 'R$57.80', category: 'IA' },
+            { date: '01.07.2025', service: 'ABACUS.AI', usd: '$30.00', brl: 'R$173.40', category: 'IA' },
+            { date: '01.07.2025', service: 'OPENAI', usd: '$91.21', brl: 'R$527.19', category: 'IA' },
+            { date: '02.07.2025', service: 'AWS BRAZIL', usd: '-', brl: 'R$98.34', category: 'Cloud' },
+            { date: '02.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL143.32', brl: 'R$152.62', category: 'IA' },
+            { date: '02.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL143.32', brl: 'R$152.62', category: 'IA' },
+            { date: '03.07.2025', service: 'MSFT * E0500WQDNB', usd: '-', brl: 'R$119.00', category: 'Cloud' },
+            { date: '03.07.2025', service: 'MSFT * E0500WQB7J', usd: '-', brl: 'R$1,190.10', category: 'Cloud' },
+            { date: '03.07.2025', service: 'MSFT * E0500WQB7K', usd: '-', brl: 'R$535.50', category: 'Cloud' },
+            { date: '03.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL137.51', brl: 'R$145.80', category: 'IA' },
+            { date: '03.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL135.90', brl: 'R$144.07', category: 'IA' },
+            { date: '04.07.2025', service: 'CREWAI, INC.', usd: '$99.00', brl: 'R$566.28', category: 'IA' },
+            { date: '04.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL131.85', brl: 'R$139.63', category: 'IA' },
+            { date: '04.07.2025', service: 'ANTHROPIC: CLAUDE TEAM', usd: 'BRL131.84', brl: 'R$139.57', category: 'IA' },
+            { date: '04.07.2025', service: 'CURSOR, AI POWERED IDE', usd: '$25.28', brl: 'R$144.60', category: 'Desenvolvimento' },
+            { date: '04.07.2025', service: 'SUPABASE', usd: '$38.12', brl: 'R$218.05', category: 'Cloud' },
+            { date: '04.07.2025', service: 'DEEPL* SUB:77ETPUNACUT', usd: '$44.39', brl: 'R$253.91', category: 'Ferramentas' },
+            { date: '05.07.2025', service: 'ABACUS.AI', usd: '$141.31', brl: 'R$808.29', category: 'IA' }
+        ];
+
+        // Preencher tabela
+        const tableBody = document.getElementById('transactionsTable');
+        transactions.forEach(transaction => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="data">${transaction.date}</td>
+                <td class="movimentacao">${transaction.service}</td>
+                <td class="valor-usd">${transaction.usd}</td>
+                <td class="valor-brl">${transaction.brl}</td>
+                <td><span style="padding: 2px 8px; background: #e3f2fd; border-radius: 12px; font-size: 11px; color: #1976d2;">${transaction.category}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Dados para gráficos
+        const categoryData = {
+            'IA': 33,
+            'Desenvolvimento': 8,
+            'Cloud': 7,
+            'Ferramentas': 3,
+            'Automação': 2,
+            'Marketing': 1,
+            'Colaboração': 1,
+            'Telefonia': 2,
+            'Outros': 2
+        };
+
+        const timelineData = {
+            'Jun 05-10': 4200,
+            'Jun 11-15': 2800,
+            'Jun 16-20': 3200,
+            'Jun 21-25': 8900,
+            'Jun 26-30': 12600,
+            'Jul 01-05': 2500
+        };
+
+        // Gráfico de categorias
+        const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(categoryData),
+                datasets: [{
+                    data: Object.values(categoryData),
+                    backgroundColor: [
+                        '#667eea', '#764ba2', '#f093fb', '#f5576c',
+                        '#4facfe', '#00f2fe', '#43e97b', '#38f9d7',
+                        '#ffecd2'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Gráfico de timeline
+        const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+        new Chart(timelineCtx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(timelineData),
+                datasets: [{
+                    label: 'Gastos (R$)',
+                    data: Object.values(timelineData),
+                    borderColor: '#667eea',
+                    backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
