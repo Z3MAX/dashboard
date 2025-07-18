@@ -16,13 +16,309 @@
         }
         
         .dashboard {
-            max-width: 1600px;
+            max-width: 1800px;
             margin: 0 auto;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
             backdrop-filter: blur(10px);
             overflow: hidden;
+            position: relative;
+        }
+
+        /* Chat Widget Styles */
+        .chat-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 400px;
+            height: 600px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            transform: translateY(100%);
+            opacity: 0;
+        }
+
+        .chat-widget.open {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chat-header p {
+            margin: 5px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .chat-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .chat-close:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .chat-message.user .message-content {
+            background: #667eea;
+            color: white;
+            margin-left: 20px;
+            margin-right: 0;
+        }
+
+        .chat-message.assistant .message-content {
+            background: white;
+            color: #333;
+            margin-right: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .message-content {
+            padding: 12px 16px;
+            border-radius: 15px;
+            max-width: 80%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .message-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .message-avatar.user {
+            background: #667eea;
+            color: white;
+        }
+
+        .message-avatar.assistant {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .chat-input-container {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .chat-send-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .chat-send-btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-1px);
+        }
+
+        .chat-send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .chat-toggle.hidden {
+            display: none;
+        }
+
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 15px;
+            margin-right: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #999;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .suggested-questions {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .suggested-questions h4 {
+            margin: 0 0 10px 0;
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .suggestion-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .suggestion-chip {
+            background: white;
+            border: 1px solid #e0e0e0;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .chat-widget {
+                width: calc(100vw - 40px);
+                height: calc(100vh - 100px);
+                bottom: 10px;
+                right: 20px;
+                left: 20px;
+            }
+            
+            .chat-toggle {
+                bottom: 10px;
+                right: 10px;
+            }
         }
         
         .header {
@@ -488,6 +784,92 @@
         </div>
     </div>
 
+    <!-- Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <div class="chat-header">
+            <h3>🤖 AI Assistant</h3>
+            <p>Pergunte sobre seus dados financeiros</p>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message assistant">
+                <div class="message-avatar assistant">🤖</div>
+                <div class="message-content">
+                    Olá! Sou seu assistente de IA. Posso te ajudar a analisar seus dados financeiros. Que tipo de informação você gostaria de saber?
+                </div>
+            </div>
+        </div>
+        
+        <div class="suggested-questions">
+            <h4>Perguntas Sugeridas:</h4>
+            <div class="suggestion-chips">
+                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Qual foi o maior gasto do mês?')">Maior gasto do mês</div>
+                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Quanto gastei com IA?')">Gastos com IA</div>
+                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Qual categoria mais cara?')">Categoria mais cara</div>
+                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Analise meus padrões de gastos')">Padrões de gastos</div>
+                <div class="suggestion-chip" onclick="sendSuggestedQuestion('Como economizar?')">Como economizar</div>
+            </div>
+        </div>
+        
+        <div class="api-key-section" id="apiKeySection">
+            <div style="padding: 15px; background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; margin: 10px 20px;">
+                <h5 style="margin: 0 0 10px 0; color: #2d5a2d;">🚀 Configuração Netlify + Gemini AI</h5>
+                <p style="margin: 0 0 10px 0; font-size: 12px; color: #2d5a2d;">
+                    <strong>Opção 1:</strong> Configurar via variáveis de ambiente (Recomendado)
+                </p>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0;">
+                    <p style="margin: 0 0 5px 0; font-size: 11px; color: #666;">
+                        <strong>1.</strong> Netlify Dashboard → Site Settings → Environment Variables
+                    </p>
+                    <p style="margin: 0 0 5px 0; font-size: 11px; color: #666;">
+                        <strong>2.</strong> Adicionar: <code>GEMINI_API_KEY = sua-chave-aqui</code>
+                    </p>
+                    <p style="margin: 0; font-size: 11px; color: #666;">
+                        <strong>3.</strong> Redeploy do site
+                    </p>
+                </div>
+                
+                <p style="margin: 10px 0 5px 0; font-size: 12px; color: #2d5a2d;">
+                    <strong>Opção 2:</strong> Inserir manualmente (menos seguro)
+                </p>
+                <div style="display: flex; gap: 10px;">
+                    <input type="password" id="apiKeyInput" placeholder="Sua chave da API do Gemini" 
+                           style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                    <button onclick="saveApiKey()" style="padding: 8px 12px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">
+                        Salvar
+                    </button>
+                </div>
+                
+                <p style="margin: 10px 0 0 0; font-size: 11px; color: #666;">
+                    <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: #667eea;">
+                        Obter chave da API gratuita →
+                    </a>
+                </p>
+            </div>
+        </div>
+        
+        <div class="chat-input-container">
+            <form class="chat-input-form" onsubmit="sendMessage(event)">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="Digite sua pergunta..."
+                    autocomplete="off"
+                >
+                <button type="submit" class="chat-send-btn" id="chatSendBtn">
+                    <span>📤</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Chat Toggle Button -->
+    <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">
+        💬
+    </button>
+
     <script>
         // Dados das transações consolidadas
         const allTransactions = [
@@ -656,6 +1038,378 @@
         let currentCategory = 'all';
         let categoryChart = null;
         let timelineChart = null;
+        let chatOpen = false;
+        let isTyping = false;
+        let geminiApiKey = '';
+
+        // ===== GEMINI AI INTEGRATION FOR NETLIFY =====
+        
+        // Função para inicializar API Key no Netlify
+        function initializeApiKey() {
+            // Tentar carregar da variável de ambiente do Netlify
+            if (window.netlifyIdentity) {
+                // Se usando Netlify Identity, pode acessar env vars
+                try {
+                    geminiApiKey = process.env.GEMINI_API_KEY || '';
+                } catch (e) {
+                    console.log('Variável de ambiente não acessível diretamente');
+                }
+            }
+            
+            // Fallback para localStorage
+            if (!geminiApiKey) {
+                const storedKey = localStorage.getItem('geminiApiKey');
+                if (storedKey) {
+                    geminiApiKey = storedKey;
+                    document.getElementById('apiKeySection').style.display = 'none';
+                    return true;
+                }
+            } else {
+                document.getElementById('apiKeySection').style.display = 'none';
+                return true;
+            }
+            
+            // Mostrar seção de configuração
+            document.getElementById('apiKeySection').style.display = 'block';
+            return false;
+        }
+        
+        // Função para salvar chave da API
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            if (apiKey) {
+                localStorage.setItem('geminiApiKey', apiKey);
+                geminiApiKey = apiKey;
+                document.getElementById('apiKeySection').style.display = 'none';
+                addMessage('🔑 Chave da API salva com sucesso! Agora posso responder suas perguntas com IA avançada.', 'assistant');
+            } else {
+                alert('Por favor, insira uma chave da API válida.');
+            }
+        }
+
+        // Função para verificar se a API está configurada
+        function checkApiKey() {
+            return geminiApiKey !== '';
+        }
+
+        // Função para processar resposta da IA com Gemini
+        async function processAIResponse(question) {
+            isTyping = true;
+            showTypingIndicator();
+            
+            try {
+                let response;
+                
+                if (checkApiKey()) {
+                    // Usar Gemini AI via função Netlify
+                    response = await callGeminiViaNetlify(question);
+                } else {
+                    // Fallback para sistema local
+                    response = generateLocalAIResponse(question);
+                }
+                
+                hideTypingIndicator();
+                addMessage(response, 'assistant');
+                
+            } catch (error) {
+                hideTypingIndicator();
+                console.error('Erro ao processar resposta:', error);
+                
+                const errorResponse = `❌ <strong>Erro ao conectar com o Gemini AI.</strong><br><br>
+                Usando sistema local como backup...<br><br>
+                ${generateLocalAIResponse(question)}`;
+                
+                addMessage(errorResponse, 'assistant');
+            }
+            
+            isTyping = false;
+        }
+
+        // Função para chamar Gemini via função Netlify
+        async function callGeminiViaNetlify(question) {
+            const prompt = createPromptForGemini(question);
+            
+            try {
+                // Primeiro, tentar via função Netlify (se configurada)
+                const netlifyResponse = await fetch('/.netlify/functions/gemini-chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: prompt
+                    })
+                });
+
+                if (netlifyResponse.ok) {
+                    const data = await netlifyResponse.json();
+                    return data.response;
+                }
+            } catch (error) {
+                console.log('Função Netlify não disponível, usando API direta');
+            }
+            
+            // Fallback para API direta
+            return await callGeminiDirectly(question);
+        }
+
+        // Função para chamar a API do Gemini diretamente
+        async function callGeminiDirectly(question) {
+            const prompt = createPromptForGemini(question);
+            
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    contents: [{
+                        parts: [{
+                            text: prompt
+                        }]
+                    }],
+                    generationConfig: {
+                        temperature: 0.7,
+                        topK: 40,
+                        topP: 0.95,
+                        maxOutputTokens: 1024,
+                    }
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erro na API: ${response.status}`);
+            }
+
+            const data = await response.json();
+            
+            if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+                return data.candidates[0].content.parts[0].text;
+            } else {
+                throw new Error('Resposta inválida da API');
+            }
+        }
+
+        // Função para criar prompt contextual para o Gemini
+        function createPromptForGemini(question) {
+            const stats = calculateCurrentStats();
+            const dataContext = prepareDataContext();
+            
+            return `Você é um assistente financeiro especializado em análise de gastos de cartão corporativo.
+
+CONTEXTO DOS DADOS:
+${dataContext}
+
+ESTATÍSTICAS ATUAIS DOS DADOS FILTRADOS:
+- Total de transações: ${stats.transactions}
+- Valor total: R$ ${stats.totalBRL.toLocaleString('pt-BR')}
+- Média por transação: R$ ${Math.round(stats.avgTransaction).toLocaleString('pt-BR')}
+- Período: ${stats.period}
+- Categoria principal: ${stats.topCategory}
+- Gastos com IA: ${stats.aiPercentage}%
+
+PERGUNTA DO USUÁRIO: "${question}"
+
+INSTRUÇÕES:
+1. Responda de forma natural e conversacional
+2. Use os dados fornecidos para dar respostas precisas
+3. Inclua números e estatísticas relevantes
+4. Use formatação HTML para destacar informações importantes (<strong>, <br>)
+5. Seja específico e útil
+6. Se a pergunta não for sobre os dados, explique que você é especializado em análise financeira destes dados
+
+Responda de forma direta e útil:`;
+        }
+
+        // Função para preparar contexto dos dados
+        function prepareDataContext() {
+            const topServices = getTopServicesForContext();
+            const topCategories = getTopCategoriesForContext();
+            const monthlyBreakdown = getMonthlyBreakdownForContext();
+            
+            return `DADOS DO CARTÃO CORPORATIVO:
+Período: Maio a Julho 2025
+Profissional: Jorge Jamil
+Departamento: Technology
+
+PRINCIPAIS SERVIÇOS:
+${topServices}
+
+PRINCIPAIS CATEGORIAS:
+${topCategories}
+
+RESUMO MENSAL:
+${monthlyBreakdown}
+
+FILTROS ATIVOS:
+- Mês: ${currentMonth === 'all' ? 'Todos os meses' : currentMonth}
+- Categoria: ${currentCategory === 'all' ? 'Todas as categorias' : currentCategory}`;
+        }
+
+        // Função para obter top serviços para contexto
+        function getTopServicesForContext() {
+            const serviceStats = {};
+            filteredTransactions.forEach(t => {
+                serviceStats[t.service] = (serviceStats[t.service] || 0) + parseBRL(t.brl);
+            });
+            
+            return Object.entries(serviceStats)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([service, total]) => `- ${service}: R$ ${total.toLocaleString('pt-BR')}`)
+                .join('\n');
+        }
+
+        // Função para obter top categorias para contexto
+        function getTopCategoriesForContext() {
+            const categoryStats = {};
+            filteredTransactions.forEach(t => {
+                categoryStats[t.category] = (categoryStats[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            return Object.entries(categoryStats)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([category, total]) => `- ${category}: R$ ${total.toLocaleString('pt-BR')}`)
+                .join('\n');
+        }
+
+        // Função para obter breakdown mensal para contexto
+        function getMonthlyBreakdownForContext() {
+            const monthlyData = {};
+            ['maio', 'junho', 'julho'].forEach(month => {
+                const monthTransactions = allTransactions.filter(t => t.month === month);
+                const total = monthTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+                monthlyData[month] = `${month.charAt(0).toUpperCase() + month.slice(1)}: R$ ${total.toLocaleString('pt-BR')} (${monthTransactions.length} transações)`;
+            });
+            
+            return Object.values(monthlyData).join('\n');
+        }
+
+        // Função fallback para sistema local (backup)
+        function generateLocalAIResponse(question) {
+            const lowerQuestion = question.toLowerCase();
+            const stats = calculateCurrentStats();
+            
+            // Respostas básicas como fallback
+            if (lowerQuestion.includes('maior gasto')) {
+                const largest = findLargestTransaction();
+                return `💰 A maior transação foi de <strong>${largest.brl}</strong> em ${largest.date} para <strong>${largest.service}</strong>.`;
+            }
+            
+            if (lowerQuestion.includes('resumo')) {
+                return `📊 <strong>Resumo dos dados:</strong><br><br>
+                • Total: <strong>R$ ${stats.totalBRL.toLocaleString('pt-BR')}</strong><br>
+                • Transações: <strong>${stats.transactions}</strong><br>
+                • Média: <strong>R$ ${Math.round(stats.avgTransaction).toLocaleString('pt-BR')}</strong><br>
+                • Período: <strong>${stats.period}</strong>`;
+            }
+            
+            return `🤖 <strong>Sistema local ativo.</strong><br><br>
+            Para respostas mais inteligentes, configure sua chave da API do Gemini.<br><br>
+            Dados atuais: ${stats.transactions} transações, R$ ${stats.totalBRL.toLocaleString('pt-BR')} total.`;
+        }
+
+        // ===== CHAT AI FUNCTIONS (GLOBAL SCOPE) =====
+        
+        // Função para alternar chat
+        function toggleChat() {
+            const chatWidget = document.getElementById('chatWidget');
+            const chatToggle = document.getElementById('chatToggle');
+            
+            chatOpen = !chatOpen;
+            
+            if (chatOpen) {
+                chatWidget.classList.add('open');
+                chatToggle.classList.add('hidden');
+                setTimeout(() => {
+                    document.getElementById('chatInput').focus();
+                }, 300);
+            } else {
+                chatWidget.classList.remove('open');
+                chatToggle.classList.remove('hidden');
+            }
+        }
+
+        // Função para enviar mensagem
+        function sendMessage(event) {
+            event.preventDefault();
+            
+            if (isTyping) return;
+            
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Adicionar mensagem do usuário
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Processar resposta da IA
+            processAIResponse(message);
+        }
+
+        // Função para enviar pergunta sugerida
+        function sendSuggestedQuestion(question) {
+            if (isTyping) return;
+            
+            const input = document.getElementById('chatInput');
+            input.value = question;
+            
+            // Simular o envio da mensagem
+            addMessage(question, 'user');
+            input.value = '';
+            processAIResponse(question);
+        }
+
+        // Função para adicionar mensagem ao chat
+        function addMessage(content, type) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${type}`;
+            
+            const avatar = type === 'user' ? '👤' : '🤖';
+            const avatarClass = type === 'user' ? 'user' : 'assistant';
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar ${avatarClass}">${avatar}</div>
+                <div class="message-content">${content}</div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Função para mostrar indicador de digitação
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message assistant';
+            typingDiv.id = 'typingIndicator';
+            
+            typingDiv.innerHTML = `
+                <div class="message-avatar assistant">🤖</div>
+                <div class="typing-indicator">
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Função para remover indicador de digitação
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
 
         // Função para converter valor BRL para número
         function parseBRL(value) {
@@ -949,7 +1703,742 @@
         }
 
         // Inicializar quando a página carregar
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        document.addEventListener('DOMContentLoaded', function() {
+            initDashboard();
+            initChatEventListeners();
+        });
+
+        // Função para inicializar event listeners do chat
+        function initChatEventListeners() {
+            // Adicionar atalhos de teclado
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && chatOpen) {
+                    toggleChat();
+                }
+            });
+        }
+
+        // ===== CHAT AI PROCESSING FUNCTIONS =====
+
+        // Função para processar resposta da IA
+        function processAIResponse(question) {
+            isTyping = true;
+            showTypingIndicator();
+            
+            // Simular delay da API
+            setTimeout(() => {
+                hideTypingIndicator();
+                const response = generateAIResponse(question);
+                addMessage(response, 'assistant');
+                isTyping = false;
+            }, 1000 + Math.random() * 2000);
+        }
+
+        // Função para gerar resposta da IA baseada nos dados
+        function generateAIResponse(question) {
+            const lowerQuestion = question.toLowerCase();
+            
+            // Calcular estatísticas dos dados filtrados
+            const stats = calculateCurrentStats();
+            
+            // Sistema de análise de linguagem natural expandido
+            
+            // 1. ANÁLISES DE VALORES E GASTOS
+            if (containsKeywords(lowerQuestion, ['maior', 'mais caro', 'maior gasto', 'mais alto', 'máximo'])) {
+                if (containsKeywords(lowerQuestion, ['categoria'])) {
+                    const topCategory = getTopCategory();
+                    return `💰 A categoria com maior gasto é <strong>${topCategory.name}</strong> com <strong>R$ ${topCategory.total.toLocaleString('pt-BR')}</strong> em ${topCategory.transactions} transações.`;
+                }
+                if (containsKeywords(lowerQuestion, ['serviço', 'empresa', 'fornecedor'])) {
+                    const topService = getTopService();
+                    return `🏢 O serviço com maior gasto é <strong>${topService.name}</strong> com <strong>R$ ${topService.total.toLocaleString('pt-BR')}</strong> em ${topService.transactions} transações.`;
+                }
+                const largest = findLargestTransaction();
+                return `💰 A maior transação foi de <strong>${largest.brl}</strong> em ${largest.date} para <strong>${largest.service}</strong> na categoria ${largest.category}.`;
+            }
+            
+            if (containsKeywords(lowerQuestion, ['menor', 'mais barato', 'menor gasto', 'mais baixo', 'mínimo'])) {
+                const smallest = findSmallestTransaction();
+                return `💸 A menor transação foi de <strong>${smallest.brl}</strong> em ${smallest.date} para <strong>${smallest.service}</strong> na categoria ${smallest.category}.`;
+            }
+            
+            if (containsKeywords(lowerQuestion, ['média', 'médio', 'average'])) {
+                return `📊 A média de gasto por transação é <strong>R$ ${Math.round(stats.avgTransaction).toLocaleString('pt-BR')}</strong>. ${stats.transactions} transações no total.`;
+            }
+            
+            // 2. ANÁLISES POR CATEGORIA
+            if (containsKeywords(lowerQuestion, ['ia', 'inteligência artificial', 'ai', 'artificial intelligence'])) {
+                const aiStats = getAIStats();
+                return `🤖 <strong>Análise de gastos com IA:</strong><br><br>
+                • Total gasto: <strong>R$ ${aiStats.total.toLocaleString('pt-BR')}</strong><br>
+                • Número de transações: <strong>${aiStats.transactions}</strong><br>
+                • Porcentagem do total: <strong>${aiStats.percentage}%</strong><br>
+                • Principais serviços: <strong>${aiStats.topServices.join(', ')}</strong><br>
+                • Média por transação: <strong>R$ ${Math.round(aiStats.total / aiStats.transactions).toLocaleString('pt-BR')}</strong>`;
+            }
+            
+            if (containsKeywords(lowerQuestion, ['desenvolvimento', 'dev', 'programação', 'código'])) {
+                return getCategoryAnalysis('Desenvolvimento');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['cloud', 'nuvem', 'microsoft', 'azure', 'aws'])) {
+                return getCategoryAnalysis('Cloud');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['educação', 'curso', 'aprendizado', 'treinamento'])) {
+                return getCategoryAnalysis('Educação');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['hardware', 'equipamento', 'computador', 'eletrônico'])) {
+                return getCategoryAnalysis('Hardware');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['e-commerce', 'mercadolivre', 'compras', 'loja'])) {
+                return getCategoryAnalysis('E-commerce');
+            }
+            
+            // 3. ANÁLISES TEMPORAIS
+            if (containsKeywords(lowerQuestion, ['maio'])) {
+                return getDetailedMonthAnalysis('maio');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['junho'])) {
+                return getDetailedMonthAnalysis('junho');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['julho'])) {
+                return getDetailedMonthAnalysis('julho');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['comparar', 'comparação', 'versus', 'vs', 'diferença'])) {
+                return getDetailedComparison();
+            }
+            
+            if (containsKeywords(lowerQuestion, ['crescimento', 'tendência', 'evolução', 'progresso'])) {
+                return getTrendAnalysis();
+            }
+            
+            // 4. ANÁLISES DE FREQUÊNCIA
+            if (containsKeywords(lowerQuestion, ['frequente', 'mais usado', 'repetido', 'recorrente'])) {
+                return getFrequencyAnalysis();
+            }
+            
+            if (containsKeywords(lowerQuestion, ['quantas', 'quantidade', 'número', 'count'])) {
+                if (containsKeywords(lowerQuestion, ['transações', 'transação'])) {
+                    return `📊 Você tem <strong>${stats.transactions} transações</strong> no período selecionado.`;
+                }
+                if (containsKeywords(lowerQuestion, ['categoria', 'categorias'])) {
+                    const categories = getUniqueCategoriesCount();
+                    return `📂 Você tem gastos em <strong>${categories.count} categorias</strong> diferentes: ${categories.list.join(', ')}.`;
+                }
+            }
+            
+            // 5. ANÁLISES DE FORNECEDORES ESPECÍFICOS
+            if (containsKeywords(lowerQuestion, ['openai', 'chatgpt'])) {
+                return getServiceAnalysis('OPENAI');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['anthropic', 'claude'])) {
+                return getServiceAnalysis('ANTHROPIC');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['microsoft', 'msft'])) {
+                return getServiceAnalysis('MICROSOFT');
+            }
+            
+            if (containsKeywords(lowerQuestion, ['bolt', 'stackblitz'])) {
+                return getServiceAnalysis('BOLT');
+            }
+            
+            // 6. ANÁLISES DE PADRÕES
+            if (containsKeywords(lowerQuestion, ['padrão', 'comportamento', 'hábito'])) {
+                return getPatternAnalysis();
+            }
+            
+            if (containsKeywords(lowerQuestion, ['recomendação', 'sugestão', 'conselho', 'otimização'])) {
+                return getRecommendations();
+            }
+            
+            // 7. ANÁLISES FINANCEIRAS
+            if (containsKeywords(lowerQuestion, ['orçamento', 'budget', 'limite', 'controle'])) {
+                return getBudgetAnalysis();
+            }
+            
+            if (containsKeywords(lowerQuestion, ['economia', 'economizar', 'reduzir', 'cortar'])) {
+                return getSavingsAnalysis();
+            }
+            
+            // 8. RESUMOS E RELATÓRIOS
+            if (containsKeywords(lowerQuestion, ['resumo', 'overview', 'relatório', 'sumário'])) {
+                return getComprehensiveReport();
+            }
+            
+            if (containsKeywords(lowerQuestion, ['tudo', 'todos', 'geral', 'total'])) {
+                return getOverallAnalysis();
+            }
+            
+            // 9. ANÁLISES ESPECÍFICAS POR VALOR
+            if (containsKeywords(lowerQuestion, ['acima', 'maior que', 'superior'])) {
+                const threshold = extractNumber(lowerQuestion);
+                if (threshold) {
+                    return getTransactionsAboveThreshold(threshold);
+                }
+            }
+            
+            if (containsKeywords(lowerQuestion, ['abaixo', 'menor que', 'inferior'])) {
+                const threshold = extractNumber(lowerQuestion);
+                if (threshold) {
+                    return getTransactionsBelowThreshold(threshold);
+                }
+            }
+            
+            // 10. BUSCA POR NOME/SERVIÇO
+            const searchTerm = extractSearchTerm(lowerQuestion);
+            if (searchTerm && (containsKeywords(lowerQuestion, ['procurar', 'buscar', 'encontrar', 'achar']) || searchTerm.length > 3)) {
+                return searchInTransactions(searchTerm);
+            }
+            
+            // Resposta inteligente baseada no contexto
+            return generateContextualResponse(lowerQuestion, stats);
+        }
+
+        // Função auxiliar para verificar palavras-chave
+        function containsKeywords(text, keywords) {
+            return keywords.some(keyword => text.includes(keyword));
+        }
+
+        // Função para extrair números da pergunta
+        function extractNumber(text) {
+            const numbers = text.match(/\d+/g);
+            return numbers ? parseInt(numbers[0]) : null;
+        }
+
+        // Função para extrair termo de busca
+        function extractSearchTerm(text) {
+            const searchPatterns = [
+                /(?:sobre|com|para|de|do|da)\s+(\w+)/,
+                /(?:buscar|procurar|encontrar)\s+(\w+)/,
+                /(\w+)(?:\s+gasto|s\s+transaç)/
+            ];
+            
+            for (const pattern of searchPatterns) {
+                const match = text.match(pattern);
+                if (match) return match[1];
+            }
+            return null;
+        }
+
+        // Função para análise detalhada por categoria
+        function getCategoryAnalysis(category) {
+            const categoryTransactions = filteredTransactions.filter(t => t.category === category);
+            if (categoryTransactions.length === 0) {
+                return `📊 Não há transações na categoria <strong>${category}</strong> no período selecionado.`;
+            }
+            
+            const total = categoryTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const avg = total / categoryTransactions.length;
+            const largest = categoryTransactions.reduce((max, current) => 
+                parseBRL(current.brl) > parseBRL(max.brl) ? current : max
+            );
+            
+            const services = {};
+            categoryTransactions.forEach(t => {
+                services[t.service] = (services[t.service] || 0) + parseBRL(t.brl);
+            });
+            
+            const topServices = Object.entries(services)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([service, value]) => `${service} (R$ ${value.toLocaleString('pt-BR')})`);
+            
+            return `📊 <strong>Análise da categoria ${category}:</strong><br><br>
+            • Total gasto: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Número de transações: <strong>${categoryTransactions.length}</strong><br>
+            • Média por transação: <strong>R$ ${Math.round(avg).toLocaleString('pt-BR')}</strong><br>
+            • Maior transação: <strong>${largest.service}</strong> (${largest.brl})<br>
+            • Principais serviços: <strong>${topServices.join(', ')}</strong>`;
+        }
+
+        // Função para análise detalhada por mês
+        function getDetailedMonthAnalysis(month) {
+            const monthTransactions = allTransactions.filter(t => t.month === month);
+            const total = monthTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const avg = total / monthTransactions.length;
+            
+            const categoryTotals = {};
+            monthTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const topCategories = Object.entries(categoryTotals)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([cat, value]) => `${cat} (R$ ${value.toLocaleString('pt-BR')})`);
+            
+            const largest = monthTransactions.reduce((max, current) => 
+                parseBRL(current.brl) > parseBRL(max.brl) ? current : max
+            );
+            
+            return `🗓️ <strong>Análise detalhada de ${month.charAt(0).toUpperCase() + month.slice(1)}:</strong><br><br>
+            • Total gasto: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Número de transações: <strong>${monthTransactions.length}</strong><br>
+            • Média por transação: <strong>R$ ${Math.round(avg).toLocaleString('pt-BR')}</strong><br>
+            • Maior transação: <strong>${largest.service}</strong> (${largest.brl})<br>
+            • Principais categorias: <strong>${topCategories.join(', ')}</strong><br>
+            • Dias ativos: <strong>${new Set(monthTransactions.map(t => t.date)).size}</strong>`;
+        }
+
+        // Funções auxiliares expandidas para análise completa
+        
+        function findSmallestTransaction() {
+            return filteredTransactions.reduce((min, current) => 
+                parseBRL(current.brl) < parseBRL(min.brl) ? current : min
+            );
+        }
+        
+        function getTopService() {
+            const serviceStats = {};
+            filteredTransactions.forEach(t => {
+                serviceStats[t.service] = (serviceStats[t.service] || 0) + parseBRL(t.brl);
+            });
+            
+            const [name, total] = Object.entries(serviceStats)
+                .sort(([,a], [,b]) => b - a)[0] || ['N/A', 0];
+            
+            const transactions = filteredTransactions.filter(t => t.service === name).length;
+            return { name, total, transactions };
+        }
+        
+        function getServiceAnalysis(serviceName) {
+            const serviceTransactions = filteredTransactions.filter(t => 
+                t.service.toUpperCase().includes(serviceName.toUpperCase())
+            );
+            
+            if (serviceTransactions.length === 0) {
+                return `🔍 Não foram encontradas transações para <strong>${serviceName}</strong> no período selecionado.`;
+            }
+            
+            const total = serviceTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const avg = total / serviceTransactions.length;
+            const months = new Set(serviceTransactions.map(t => t.month)).size;
+            
+            return `🏢 <strong>Análise de ${serviceName}:</strong><br><br>
+            • Total gasto: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Número de transações: <strong>${serviceTransactions.length}</strong><br>
+            • Média por transação: <strong>R$ ${Math.round(avg).toLocaleString('pt-BR')}</strong><br>
+            • Meses ativos: <strong>${months}</strong><br>
+            • Porcentagem do total: <strong>${((total / filteredTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0)) * 100).toFixed(1)}%</strong>`;
+        }
+        
+        function getFrequencyAnalysis() {
+            const serviceFreq = {};
+            filteredTransactions.forEach(t => {
+                serviceFreq[t.service] = (serviceFreq[t.service] || 0) + 1;
+            });
+            
+            const topFrequent = Object.entries(serviceFreq)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 5)
+                .map(([service, count]) => `${service} (${count}x)`);
+            
+            return `🔄 <strong>Serviços mais frequentes:</strong><br><br>
+            ${topFrequent.map((item, index) => `${index + 1}. ${item}`).join('<br>')}`;
+        }
+        
+        function getUniqueCategoriesCount() {
+            const categories = [...new Set(filteredTransactions.map(t => t.category))];
+            return {
+                count: categories.length,
+                list: categories
+            };
+        }
+        
+        function getDetailedComparison() {
+            const monthlyStats = {};
+            ['maio', 'junho', 'julho'].forEach(month => {
+                const monthTransactions = allTransactions.filter(t => t.month === month);
+                monthlyStats[month] = {
+                    total: monthTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0),
+                    transactions: monthTransactions.length,
+                    avgTransaction: monthTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0) / monthTransactions.length
+                };
+            });
+            
+            const bestMonth = Object.entries(monthlyStats)
+                .sort(([,a], [,b]) => a.total - b.total)[0][0];
+            const worstMonth = Object.entries(monthlyStats)
+                .sort(([,a], [,b]) => b.total - a.total)[0][0];
+            
+            return `📊 <strong>Comparação detalhada:</strong><br><br>
+            <strong>Maio:</strong> R$ ${monthlyStats.maio.total.toLocaleString('pt-BR')} (${monthlyStats.maio.transactions} transações)<br>
+            <strong>Junho:</strong> R$ ${monthlyStats.junho.total.toLocaleString('pt-BR')} (${monthlyStats.junho.transactions} transações)<br>
+            <strong>Julho:</strong> R$ ${monthlyStats.julho.total.toLocaleString('pt-BR')} (${monthlyStats.julho.transactions} transações)<br><br>
+            📈 <strong>Mês com menor gasto:</strong> ${bestMonth}<br>
+            📉 <strong>Mês com maior gasto:</strong> ${worstMonth}`;
+        }
+        
+        function getTrendAnalysis() {
+            const monthlyTotals = {
+                maio: allTransactions.filter(t => t.month === 'maio').reduce((sum, t) => sum + parseBRL(t.brl), 0),
+                junho: allTransactions.filter(t => t.month === 'junho').reduce((sum, t) => sum + parseBRL(t.brl), 0),
+                julho: allTransactions.filter(t => t.month === 'julho').reduce((sum, t) => sum + parseBRL(t.brl), 0)
+            };
+            
+            const maioToJunho = ((monthlyTotals.junho - monthlyTotals.maio) / monthlyTotals.maio) * 100;
+            const junhoToJulho = ((monthlyTotals.julho - monthlyTotals.junho) / monthlyTotals.junho) * 100;
+            
+            let trend = '';
+            if (maioToJunho > 0 && junhoToJulho > 0) {
+                trend = '📈 Tendência crescente consistente nos gastos.';
+            } else if (maioToJunho < 0 && junhoToJulho < 0) {
+                trend = '📉 Tendência decrescente consistente nos gastos.';
+            } else {
+                trend = '📊 Tendência irregular nos gastos.';
+            }
+            
+            return `📈 <strong>Análise de tendência:</strong><br><br>
+            • Maio → Junho: <strong>${maioToJunho.toFixed(1)}%</strong><br>
+            • Junho → Julho: <strong>${junhoToJulho.toFixed(1)}%</strong><br><br>
+            ${trend}`;
+        }
+        
+        function getPatternAnalysis() {
+            const dayOfWeekSpending = {};
+            const categoryByMonth = {};
+            
+            filteredTransactions.forEach(t => {
+                const date = new Date(t.date.split('.').reverse().join('-'));
+                const dayOfWeek = date.toLocaleDateString('pt-BR', { weekday: 'long' });
+                
+                dayOfWeekSpending[dayOfWeek] = (dayOfWeekSpending[dayOfWeek] || 0) + parseBRL(t.brl);
+                
+                if (!categoryByMonth[t.month]) categoryByMonth[t.month] = {};
+                categoryByMonth[t.month][t.category] = (categoryByMonth[t.month][t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const topDayOfWeek = Object.entries(dayOfWeekSpending)
+                .sort(([,a], [,b]) => b - a)[0];
+            
+            return `🔍 <strong>Análise de padrões:</strong><br><br>
+            • Dia da semana com mais gastos: <strong>${topDayOfWeek?.[0] || 'N/A'}</strong><br>
+            • Valor no dia: <strong>R$ ${topDayOfWeek?.[1]?.toLocaleString('pt-BR') || '0'}</strong><br>
+            • Categoria mais consistente: <strong>${getMostConsistentCategory()}</strong>`;
+        }
+        
+        function getMostConsistentCategory() {
+            const categoryByMonth = {};
+            
+            allTransactions.forEach(t => {
+                if (!categoryByMonth[t.category]) categoryByMonth[t.category] = new Set();
+                categoryByMonth[t.category].add(t.month);
+            });
+            
+            const mostConsistent = Object.entries(categoryByMonth)
+                .sort(([,a], [,b]) => b.size - a.size)[0];
+            
+            return mostConsistent?.[0] || 'N/A';
+        }
+        
+        function getRecommendations() {
+            const aiSpending = getAIStats();
+            const topCategory = getTopCategory();
+            const monthlyComparison = getMonthComparison();
+            
+            let recommendations = [];
+            
+            if (aiSpending.percentage > 40) {
+                recommendations.push('🤖 Considere consolidar serviços de IA para otimizar custos');
+            }
+            
+            if (topCategory.total > (filteredTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0) * 0.4)) {
+                recommendations.push(`📊 A categoria ${topCategory.name} representa mais de 40% dos gastos - considere revisar`);
+            }
+            
+            if (monthlyComparison.julho > monthlyComparison.maio * 1.5) {
+                recommendations.push('📈 Crescimento acelerado nos gastos - considere implementar controles');
+            }
+            
+            const duplicateServices = findDuplicateServices();
+            if (duplicateServices.length > 0) {
+                recommendations.push(`🔄 Serviços similares detectados: ${duplicateServices.join(', ')}`);
+            }
+            
+            return recommendations.length > 0 ? 
+                `💡 <strong>Recomendações:</strong><br><br>${recommendations.map((r, i) => `${i + 1}. ${r}`).join('<br>')}` :
+                '✅ <strong>Seus gastos parecem bem organizados!</strong> Continue monitorando regularmente.';
+        }
+        
+        function findDuplicateServices() {
+            const services = filteredTransactions.map(t => t.service.toLowerCase());
+            const duplicates = [];
+            
+            // Lógica simples para detectar serviços similares
+            const serviceGroups = {
+                'openai': ['openai', 'chatgpt'],
+                'anthropic': ['anthropic', 'claude'],
+                'microsoft': ['microsoft', 'msft'],
+                'mercadolivre': ['mercadolivre', 'mercadopago']
+            };
+            
+            Object.entries(serviceGroups).forEach(([group, keywords]) => {
+                const matches = services.filter(s => keywords.some(k => s.includes(k)));
+                if (matches.length > 1) {
+                    duplicates.push(group);
+                }
+            });
+            
+            return duplicates;
+        }
+        
+        function getBudgetAnalysis() {
+            const monthlyAvg = (filteredTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0)) / 3;
+            const categoryDistribution = {};
+            
+            filteredTransactions.forEach(t => {
+                categoryDistribution[t.category] = (categoryDistribution[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const topCategories = Object.entries(categoryDistribution)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3);
+            
+            return `💰 <strong>Análise de orçamento:</strong><br><br>
+            • Média mensal: <strong>R$ ${monthlyAvg.toLocaleString('pt-BR')}</strong><br>
+            • Distribuição por categoria:<br>
+            ${topCategories.map(([cat, value]) => 
+                `&nbsp;&nbsp;• ${cat}: R$ ${value.toLocaleString('pt-BR')} (${((value / filteredTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0)) * 100).toFixed(1)}%)`
+            ).join('<br>')}`;
+        }
+        
+        function getSavingsAnalysis() {
+            const suggestions = [];
+            const aiTotal = getAIStats().total;
+            const topService = getTopService();
+            
+            if (aiTotal > 5000) {
+                suggestions.push(`🤖 Potencial economia de R$ ${(aiTotal * 0.2).toLocaleString('pt-BR')} consolidando serviços de IA`);
+            }
+            
+            if (topService.total > 3000) {
+                suggestions.push(`🏢 Rever contrato com ${topService.name} - possível economia de R$ ${(topService.total * 0.15).toLocaleString('pt-BR')}`);
+            }
+            
+            return suggestions.length > 0 ?
+                `💡 <strong>Oportunidades de economia:</strong><br><br>${suggestions.map((s, i) => `${i + 1}. ${s}`).join('<br>')}` :
+                '✅ <strong>Seus gastos estão otimizados!</strong> Continue monitorando.';
+        }
+        
+        function getComprehensiveReport() {
+            const stats = calculateCurrentStats();
+            const topCategory = getTopCategory();
+            const topService = getTopService();
+            const aiStats = getAIStats();
+            
+            return `📊 <strong>Relatório Completo:</strong><br><br>
+            <strong>📈 Resumo Financeiro:</strong><br>
+            • Total gasto: R$ ${stats.totalBRL.toLocaleString('pt-BR')}<br>
+            • Transações: ${stats.transactions}<br>
+            • Média: R$ ${Math.round(stats.avgTransaction).toLocaleString('pt-BR')}<br><br>
+            
+            <strong>🏆 Principais Gastos:</strong><br>
+            • Categoria: ${topCategory.name} (R$ ${topCategory.total.toLocaleString('pt-BR')})<br>
+            • Serviço: ${topService.name} (R$ ${topService.total.toLocaleString('pt-BR')})<br><br>
+            
+            <strong>🤖 Análise IA:</strong><br>
+            • Total IA: R$ ${aiStats.total.toLocaleString('pt-BR')} (${aiStats.percentage}%)<br>
+            • Principais: ${aiStats.topServices.slice(0, 2).join(', ')}<br><br>
+            
+            <strong>📅 Período:</strong> ${stats.period}`;
+        }
+        
+        function getOverallAnalysis() {
+            const totalAll = allTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const totalTransactions = allTransactions.length;
+            const uniqueServices = new Set(allTransactions.map(t => t.service)).size;
+            const uniqueCategories = new Set(allTransactions.map(t => t.category)).size;
+            
+            return `🌟 <strong>Análise Geral Completa:</strong><br><br>
+            • Total geral: <strong>R$ ${totalAll.toLocaleString('pt-BR')}</strong><br>
+            • Total de transações: <strong>${totalTransactions}</strong><br>
+            • Serviços únicos: <strong>${uniqueServices}</strong><br>
+            • Categorias: <strong>${uniqueCategories}</strong><br>
+            • Média geral: <strong>R$ ${Math.round(totalAll / totalTransactions).toLocaleString('pt-BR')}</strong><br>
+            • Período: <strong>Maio a Julho 2025</strong>`;
+        }
+        
+        function getTransactionsAboveThreshold(threshold) {
+            const above = filteredTransactions.filter(t => parseBRL(t.brl) > threshold);
+            const total = above.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            
+            return `📊 <strong>Transações acima de R$ ${threshold.toLocaleString('pt-BR')}:</strong><br><br>
+            • Quantidade: <strong>${above.length}</strong><br>
+            • Total: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Porcentagem: <strong>${((above.length / filteredTransactions.length) * 100).toFixed(1)}%</strong>`;
+        }
+        
+        function getTransactionsBelowThreshold(threshold) {
+            const below = filteredTransactions.filter(t => parseBRL(t.brl) < threshold);
+            const total = below.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            
+            return `📊 <strong>Transações abaixo de R$ ${threshold.toLocaleString('pt-BR')}:</strong><br><br>
+            • Quantidade: <strong>${below.length}</strong><br>
+            • Total: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Porcentagem: <strong>${((below.length / filteredTransactions.length) * 100).toFixed(1)}%</strong>`;
+        }
+        
+        function searchInTransactions(searchTerm) {
+            const matches = filteredTransactions.filter(t => 
+                t.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                t.category.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            
+            if (matches.length === 0) {
+                return `🔍 Nenhuma transação encontrada para <strong>"${searchTerm}"</strong>.`;
+            }
+            
+            const total = matches.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const uniqueServices = new Set(matches.map(t => t.service));
+            
+            return `🔍 <strong>Resultados para "${searchTerm}":</strong><br><br>
+            • Transações encontradas: <strong>${matches.length}</strong><br>
+            • Total gasto: <strong>R$ ${total.toLocaleString('pt-BR')}</strong><br>
+            • Serviços: <strong>${Array.from(uniqueServices).slice(0, 3).join(', ')}</strong>`;
+        }
+        
+        function generateContextualResponse(question, stats) {
+            // Resposta inteligente baseada no contexto da pergunta
+            if (question.includes('?')) {
+                return `🤔 <strong>Baseado na sua pergunta:</strong><br><br>
+                Analisando os dados atuais (${stats.transactions} transações, R$ ${stats.totalBRL.toLocaleString('pt-BR')}), 
+                posso ajudar com análises específicas. Tente perguntas como:<br><br>
+                • "Qual categoria gasta mais?"<br>
+                • "Como está a evolução mensal?"<br>
+                • "Quais serviços uso mais?"<br>
+                • "Preciso economizar em alguma área?"`;
+            }
+            
+            return `💡 <strong>Posso ajudar com isso!</strong><br><br>
+            Com base nos dados filtrados (${stats.transactions} transações), posso responder sobre:<br><br>
+            📊 Análises financeiras e estatísticas<br>
+            🏢 Informações sobre fornecedores<br>
+            📅 Comparações temporais<br>
+            🔍 Buscas específicas<br>
+            💰 Recomendações de economia<br><br>
+            <strong>O que você gostaria de saber?</strong>`;
+        }
+        function calculateCurrentStats() {
+            const totalBRL = filteredTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const aiTransactions = filteredTransactions.filter(t => t.category === 'IA');
+            const aiPercentage = Math.round((aiTransactions.length / filteredTransactions.length) * 100);
+            
+            const categoryTotals = {};
+            filteredTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const topCategory = Object.entries(categoryTotals)
+                .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+            
+            return {
+                transactions: filteredTransactions.length,
+                totalBRL: totalBRL,
+                avgTransaction: totalBRL / filteredTransactions.length,
+                aiPercentage: aiPercentage,
+                topCategory: topCategory,
+                period: currentMonth === 'all' ? 'Maio-Julho 2025' : `${currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)} 2025`
+            };
+        }
+
+        function findLargestTransaction() {
+            return filteredTransactions.reduce((max, current) => 
+                parseBRL(current.brl) > parseBRL(max.brl) ? current : max
+            );
+        }
+
+        function getAIStats() {
+            const aiTransactions = filteredTransactions.filter(t => t.category === 'IA');
+            const total = aiTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const percentage = Math.round((aiTransactions.length / filteredTransactions.length) * 100);
+            
+            const serviceStats = {};
+            aiTransactions.forEach(t => {
+                serviceStats[t.service] = (serviceStats[t.service] || 0) + parseBRL(t.brl);
+            });
+            
+            const topServices = Object.entries(serviceStats)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 3)
+                .map(([service]) => service);
+            
+            return {
+                total: total,
+                transactions: aiTransactions.length,
+                percentage: percentage,
+                topServices: topServices
+            };
+        }
+
+        function getTopCategory() {
+            const categoryTotals = {};
+            filteredTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const [name, total] = Object.entries(categoryTotals)
+                .sort(([,a], [,b]) => b - a)[0] || ['N/A', 0];
+            
+            const transactions = filteredTransactions.filter(t => t.category === name).length;
+            
+            return { name, total, transactions };
+        }
+
+        function getMonthStats(month) {
+            const monthTransactions = allTransactions.filter(t => t.month === month);
+            const total = monthTransactions.reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const largest = monthTransactions.reduce((max, current) => 
+                parseBRL(current.brl) > parseBRL(max.brl) ? current : max
+            );
+            
+            const categoryTotals = {};
+            monthTransactions.forEach(t => {
+                categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseBRL(t.brl);
+            });
+            
+            const topCategory = Object.entries(categoryTotals)
+                .sort(([,a], [,b]) => b - a)[0]?.[0] || 'N/A';
+            
+            return {
+                transactions: monthTransactions.length,
+                total: total,
+                largest: largest,
+                topCategory: topCategory
+            };
+        }
+
+        function getMonthComparison() {
+            const maio = allTransactions.filter(t => t.month === 'maio')
+                .reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const junho = allTransactions.filter(t => t.month === 'junho')
+                .reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            const julho = allTransactions.filter(t => t.month === 'julho')
+                .reduce((sum, t) => sum + parseBRL(t.brl), 0);
+            
+            let trend = '';
+            if (julho > junho && junho > maio) {
+                trend = '📈 Tendência crescente nos gastos.';
+            } else if (julho < junho && junho < maio) {
+                trend = '📉 Tendência decrescente nos gastos.';
+            } else {
+                trend = '📊 Gastos variáveis entre os meses.';
+            }
+            
+            return { maio, junho, julho, trend };
+        }
+
+        // Adicionar window para garantir escopo global
+        window.toggleChat = toggleChat;
+        window.sendMessage = sendMessage;
+        window.sendSuggestedQuestion = sendSuggestedQuestion;
     </script>
 </body>
 </html>
