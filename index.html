@@ -47,6 +47,55 @@
             color: #7f8c8d;
         }
 
+        .file-upload {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .file-upload h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .file-input-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .file-input {
+            padding: 10px;
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .process-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        .process-btn:hover {
+            background: #2980b9;
+        }
+
+        .process-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+        }
+
         .summary-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -187,20 +236,6 @@
             border-color: #3498db;
         }
 
-        .category-card {
-            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            margin-bottom: 15px;
-        }
-
-        .highlight {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-        }
-
         .total-section {
             background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -239,178 +274,353 @@
             font-size: 1.5em;
             font-weight: bold;
         }
+
+        .loading {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>🏢 Dashboard Cartão Corporativo Technology</h1>
-            <p>Análise Completa dos Gastos - Maio e Julho 2025</p>
+            <p>Análise Completa dos Gastos Corporativos</p>
         </div>
 
-        <div class="total-section">
-            <h2>📊 Resumo Executivo</h2>
-            <div class="total-grid">
-                <div class="total-item">
-                    <h4>Total de Transações</h4>
-                    <div class="amount" id="total-transactions">-</div>
+        <div class="file-upload">
+            <h3>📂 Carregar Arquivos Excel</h3>
+            <p>Selecione os arquivos de cartão corporativo para análise</p>
+            <div class="file-input-group">
+                <div>
+                    <label for="maioFile">Arquivo Maio/Junho:</label>
+                    <input type="file" id="maioFile" class="file-input" accept=".xlsx,.xls">
                 </div>
-                <div class="total-item">
-                    <h4>Total em USD</h4>
-                    <div class="amount" id="total-usd">-</div>
+                <div>
+                    <label for="julhoFile">Arquivo Julho:</label>
+                    <input type="file" id="julhoFile" class="file-input" accept=".xlsx,.xls">
                 </div>
-                <div class="total-item">
-                    <h4>Total em BRL</h4>
-                    <div class="amount" id="total-brl">-</div>
-                </div>
-                <div class="total-item">
-                    <h4>Ticket Médio</h4>
-                    <div class="amount" id="avg-ticket">-</div>
-                </div>
+                <button id="processBtn" class="process-btn" disabled>📊 Processar Dados</button>
             </div>
+            <div id="uploadStatus"></div>
         </div>
 
-        <div class="summary-cards">
-            <div class="card">
-                <h3>📅 Maio 2025</h3>
-                <div class="metric">
-                    <span><strong>Transações:</strong></span>
-                    <span class="value" id="maio-transactions">-</span>
-                </div>
-                <div class="metric">
-                    <span><strong>Total USD:</strong></span>
-                    <span class="value" id="maio-usd">-</span>
-                </div>
-                <div class="metric">
-                    <span><strong>Total BRL:</strong></span>
-                    <span class="value" id="maio-brl">-</span>
-                </div>
-            </div>
-
-            <div class="card">
-                <h3>📅 Julho 2025</h3>
-                <div class="metric">
-                    <span><strong>Transações:</strong></span>
-                    <span class="value" id="julho-transactions">-</span>
-                </div>
-                <div class="metric">
-                    <span><strong>Total USD:</strong></span>
-                    <span class="value" id="julho-usd">-</span>
-                </div>
-                <div class="metric">
-                    <span><strong>Total BRL:</strong></span>
-                    <span class="value" id="julho-brl">-</span>
+        <div id="dashboardContent" class="hidden">
+            <div class="total-section">
+                <h2>📊 Resumo Executivo</h2>
+                <div class="total-grid">
+                    <div class="total-item">
+                        <h4>Total de Transações</h4>
+                        <div class="amount" id="total-transactions">-</div>
+                    </div>
+                    <div class="total-item">
+                        <h4>Total em USD</h4>
+                        <div class="amount" id="total-usd">-</div>
+                    </div>
+                    <div class="total-item">
+                        <h4>Total em BRL</h4>
+                        <div class="amount" id="total-brl">-</div>
+                    </div>
+                    <div class="total-item">
+                        <h4>Ticket Médio</h4>
+                        <div class="amount" id="avg-ticket">-</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="card">
-                <h3>📈 Comparativo</h3>
-                <div class="metric">
-                    <span><strong>Variação Transações:</strong></span>
-                    <span class="value" id="var-transactions">-</span>
+            <div class="summary-cards">
+                <div class="card">
+                    <h3>📅 Maio 2025</h3>
+                    <div class="metric">
+                        <span><strong>Transações:</strong></span>
+                        <span class="value" id="maio-transactions">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Total USD:</strong></span>
+                        <span class="value" id="maio-usd">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Total BRL:</strong></span>
+                        <span class="value" id="maio-brl">-</span>
+                    </div>
                 </div>
-                <div class="metric">
-                    <span><strong>Variação USD:</strong></span>
-                    <span class="value" id="var-usd">-</span>
+
+                <div class="card">
+                    <h3>📅 Julho 2025</h3>
+                    <div class="metric">
+                        <span><strong>Transações:</strong></span>
+                        <span class="value" id="julho-transactions">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Total USD:</strong></span>
+                        <span class="value" id="julho-usd">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Total BRL:</strong></span>
+                        <span class="value" id="julho-brl">-</span>
+                    </div>
                 </div>
-                <div class="metric">
-                    <span><strong>Variação BRL:</strong></span>
-                    <span class="value" id="var-brl">-</span>
+
+                <div class="card">
+                    <h3>📈 Comparativo</h3>
+                    <div class="metric">
+                        <span><strong>Variação Transações:</strong></span>
+                        <span class="value" id="var-transactions">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Variação USD:</strong></span>
+                        <span class="value" id="var-usd">-</span>
+                    </div>
+                    <div class="metric">
+                        <span><strong>Variação BRL:</strong></span>
+                        <span class="value" id="var-brl">-</span>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="charts-container">
-            <div class="chart-card">
-                <h3>💰 Gastos por Mês (BRL)</h3>
-                <div class="chart-container">
-                    <canvas id="monthlyChart"></canvas>
+            <div class="charts-container">
+                <div class="chart-card">
+                    <h3>💰 Gastos por Mês (BRL)</h3>
+                    <div class="chart-container">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>🏷️ Gastos por Categoria</h3>
+                    <div class="chart-container">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📊 Comparativo USD vs BRL</h3>
+                    <div class="chart-container">
+                        <canvas id="currencyChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>📈 Distribuição de Transações</h3>
+                    <div class="chart-container">
+                        <canvas id="transactionChart"></canvas>
+                    </div>
                 </div>
             </div>
 
-            <div class="chart-card">
-                <h3>🏷️ Gastos por Categoria</h3>
-                <div class="chart-container">
-                    <canvas id="categoryChart"></canvas>
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <label><strong>Filtrar por:</strong></label>
+                    <select id="monthFilter">
+                        <option value="all">Todos os Meses</option>
+                        <option value="Maio 2025">Maio 2025</option>
+                        <option value="Julho 2025">Julho 2025</option>
+                    </select>
+                    <select id="categoryFilter">
+                        <option value="all">Todas as Categorias</option>
+                    </select>
+                    <input type="text" id="searchFilter" placeholder="Buscar por movimentação...">
                 </div>
             </div>
 
-            <div class="chart-card">
-                <h3>📊 Comparativo USD vs BRL</h3>
-                <div class="chart-container">
-                    <canvas id="currencyChart"></canvas>
+            <div class="transactions-table">
+                <h3>📋 Detalhamento Completo das Transações</h3>
+                <div class="table-container">
+                    <table id="transactionsTable">
+                        <thead>
+                            <tr>
+                                <th>Mês</th>
+                                <th>Profissional</th>
+                                <th>Data</th>
+                                <th>Movimentação</th>
+                                <th>Categoria</th>
+                                <th>Valor USD</th>
+                                <th>Valor BRL</th>
+                                <th>Relatório</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsBody">
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-
-            <div class="chart-card">
-                <h3>📈 Distribuição de Transações</h3>
-                <div class="chart-container">
-                    <canvas id="transactionChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="filter-controls">
-            <div class="filter-group">
-                <label><strong>Filtrar por:</strong></label>
-                <select id="monthFilter">
-                    <option value="all">Todos os Meses</option>
-                    <option value="Maio 2025">Maio 2025</option>
-                    <option value="Julho 2025">Julho 2025</option>
-                </select>
-                <select id="categoryFilter">
-                    <option value="all">Todas as Categorias</option>
-                </select>
-                <input type="text" id="searchFilter" placeholder="Buscar por movimentação...">
-            </div>
-        </div>
-
-        <div class="transactions-table">
-            <h3>📋 Detalhamento Completo das Transações</h3>
-            <div class="table-container">
-                <table id="transactionsTable">
-                    <thead>
-                        <tr>
-                            <th>Mês</th>
-                            <th>Profissional</th>
-                            <th>Data</th>
-                            <th>Movimentação</th>
-                            <th>Categoria</th>
-                            <th>Valor USD</th>
-                            <th>Valor BRL</th>
-                            <th>Relatório</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="transactionsBody">
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>
 
     <script>
-        // Dados serão carregados do window.dashboardData
         let data = null;
         let filteredData = [];
         let charts = {};
+        let maioFile = null;
+        let julhoFile = null;
 
-        async function loadData() {
-            // Aguardar dados estarem disponíveis
-            if (window.dashboardData) {
-                data = window.dashboardData;
-                initializeDashboard();
-            } else {
-                // Dados mock para desenvolvimento
-                console.log("Usando dados mock - em produção os dados virão do processamento Excel");
+        // Event listeners para upload de arquivos
+        document.getElementById('maioFile').addEventListener('change', function(e) {
+            maioFile = e.target.files[0];
+            checkFilesReady();
+        });
+
+        document.getElementById('julhoFile').addEventListener('change', function(e) {
+            julhoFile = e.target.files[0];
+            checkFilesReady();
+        });
+
+        document.getElementById('processBtn').addEventListener('click', processFiles);
+
+        function checkFilesReady() {
+            const processBtn = document.getElementById('processBtn');
+            processBtn.disabled = !(maioFile && julhoFile);
+        }
+
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('uploadStatus');
+            statusDiv.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        async function processFiles() {
+            try {
+                showStatus('🔄 Processando arquivos...', 'loading');
+                
+                const maioData = await processExcelFile(maioFile, 'Maio 2025');
+                const julhoData = await processExcelFile(julhoFile, 'Julho 2025');
+                
+                const maioCategories = categorizeData(maioData.transactions);
+                const julhoCategories = categorizeData(julhoData.transactions);
+                
                 data = {
-                    totalsMaio: {transacoes: 34, usd: 12383.29, brl: 89222.93},
-                    totalsJulho: {transacoes: 73, usd: 9798.81, brl: 31322.05},
-                    allTransactions: [],
-                    categorizedData: {maio: {}, julho: {}}
+                    totalsMaio: maioData.totals,
+                    totalsJulho: julhoData.totals,
+                    allTransactions: [...maioData.transactions, ...julhoData.transactions],
+                    categorizedData: {
+                        maio: maioCategories,
+                        julho: julhoCategories
+                    }
                 };
+                
+                showStatus('✅ Arquivos processados com sucesso!', 'success');
+                document.getElementById('dashboardContent').classList.remove('hidden');
                 initializeDashboard();
+                
+            } catch (error) {
+                console.error('Erro ao processar arquivos:', error);
+                showStatus(`❌ Erro ao processar arquivos: ${error.message}`, 'error');
             }
+        }
+
+        function processExcelFile(file, monthName) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const workbook = XLSX.read(e.target.result, { type: 'binary' });
+                        const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                        const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                        
+                        // Os headers estão na linha 2 (índice 2)
+                        const headers = data[2];
+                        
+                        // Os dados começam na linha 3 (índice 3)
+                        const transactions = [];
+                        let totalUSD = 0;
+                        let totalBRL = 0;
+                        
+                        for (let i = 3; i < data.length; i++) {
+                            const row = data[i];
+                            if (!row || row.length === 0 || !row[0]) continue;
+                            
+                            const transaction = {
+                                profissional: row[0],
+                                data: row[1],
+                                movimentacao: row[2],
+                                valorUSD: row[3] || 0,
+                                valorBRL: row[4] || 0,
+                                relatorio: row[5] || '',
+                                status: row[6] || '',
+                                nfInvoice: row[7] || '',
+                                mes: monthName
+                            };
+                            
+                            transactions.push(transaction);
+                            totalUSD += parseFloat(transaction.valorUSD) || 0;
+                            totalBRL += parseFloat(transaction.valorBRL) || 0;
+                        }
+                        
+                        resolve({
+                            transactions,
+                            totals: {
+                                transacoes: transactions.length,
+                                usd: totalUSD,
+                                brl: totalBRL
+                            }
+                        });
+                        
+                    } catch (error) {
+                        reject(error);
+                    }
+                };
+                reader.onerror = reject;
+                reader.readAsBinaryString(file);
+            });
+        }
+
+        function categorizeTransaction(movimentacao) {
+            const mov = movimentacao.toUpperCase();
+            if (mov.includes('OPENAI') || mov.includes('ANTHROPIC') || mov.includes('CLAUDE')) return 'AI/ML';
+            if (mov.includes('MERCADOLIVRE') || mov.includes('MERCADOLIV')) return 'E-commerce';
+            if (mov.includes('KABUM') || mov.includes('HUB*KABUM')) return 'Hardware';
+            if (mov.includes('MIRO') || mov.includes('BOLT') || mov.includes('STACKBLITZ') || mov.includes('VUE')) return 'Dev Tools';
+            if (mov.includes('CHECKR') || mov.includes('ABACUS')) return 'SaaS/Tools';
+            if (mov.includes('GITHUB') || mov.includes('GIT')) return 'Code/Git';
+            if (mov.includes('DIGITAL OCEAN') || mov.includes('DIGITALOCEAN')) return 'Cloud/Hosting';
+            if (mov.includes('REGISTROBR') || mov.includes('ONLYDOMAINS')) return 'Domínios';
+            if (mov.includes('AWS') || mov.includes('AMAZON')) return 'Cloud/AWS';
+            return 'Outros';
+        }
+
+        function categorizeData(transactions) {
+            const categorized = {};
+            
+            transactions.forEach(transaction => {
+                const category = categorizeTransaction(transaction.movimentacao);
+                
+                if (!categorized[category]) {
+                    categorized[category] = {
+                        usd: 0,
+                        brl: 0,
+                        transacoes: 0
+                    };
+                }
+                
+                categorized[category].usd += parseFloat(transaction.valorUSD) || 0;
+                categorized[category].brl += parseFloat(transaction.valorBRL) || 0;
+                categorized[category].transacoes += 1;
+            });
+            
+            return categorized;
         }
 
         function formatCurrency(value, currency = 'BRL') {
@@ -468,6 +678,8 @@
 
         function createMonthlyChart() {
             const ctx = document.getElementById('monthlyChart').getContext('2d');
+            if (charts.monthly) charts.monthly.destroy();
+            
             charts.monthly = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -504,15 +716,13 @@
 
         function createCategoryChart() {
             const ctx = document.getElementById('categoryChart').getContext('2d');
+            if (charts.category) charts.category.destroy();
             
-            // Combinar categorias de ambos os meses
             const allCategories = new Set();
             Object.keys(data.categorizedData.maio || {}).forEach(cat => allCategories.add(cat));
             Object.keys(data.categorizedData.julho || {}).forEach(cat => allCategories.add(cat));
             
             const categories = Array.from(allCategories);
-            const maioData = categories.map(cat => (data.categorizedData.maio[cat] || {brl: 0}).brl);
-            const julhoData = categories.map(cat => (data.categorizedData.julho[cat] || {brl: 0}).brl);
 
             charts.category = new Chart(ctx, {
                 type: 'doughnut',
@@ -526,7 +736,8 @@
                         }),
                         backgroundColor: [
                             '#3498db', '#e74c3c', '#f39c12', '#27ae60', 
-                            '#9b59b6', '#1abc9c', '#34495e', '#e67e22'
+                            '#9b59b6', '#1abc9c', '#34495e', '#e67e22',
+                            '#f1c40f', '#e91e63'
                         ]
                     }]
                 },
@@ -544,6 +755,8 @@
 
         function createCurrencyChart() {
             const ctx = document.getElementById('currencyChart').getContext('2d');
+            if (charts.currency) charts.currency.destroy();
+            
             charts.currency = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -576,6 +789,8 @@
 
         function createTransactionChart() {
             const ctx = document.getElementById('transactionChart').getContext('2d');
+            if (charts.transaction) charts.transaction.destroy();
+            
             charts.transaction = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -607,8 +822,9 @@
 
         function populateFilters() {
             const categoryFilter = document.getElementById('categoryFilter');
-            const allCategories = new Set();
+            categoryFilter.innerHTML = '<option value="all">Todas as Categorias</option>';
             
+            const allCategories = new Set();
             Object.keys(data.categorizedData.maio || {}).forEach(cat => allCategories.add(cat));
             Object.keys(data.categorizedData.julho || {}).forEach(cat => allCategories.add(cat));
             
@@ -623,18 +839,6 @@
             document.getElementById('monthFilter').addEventListener('change', filterTransactions);
             document.getElementById('categoryFilter').addEventListener('change', filterTransactions);
             document.getElementById('searchFilter').addEventListener('input', filterTransactions);
-        }
-
-        function categorizeTransaction(movimentacao) {
-            const mov = movimentacao.toUpperCase();
-            if (mov.includes('OPENAI') || mov.includes('ANTHROPIC') || mov.includes('CLAUDE')) return 'AI/ML';
-            if (mov.includes('MERCADOLIVRE') || mov.includes('MERCADOLIV')) return 'E-commerce';
-            if (mov.includes('KABUM') || mov.includes('HUB*KABUM')) return 'Hardware';
-            if (mov.includes('MIRO') || mov.includes('BOLT') || mov.includes('STACKBLITZ')) return 'Dev Tools';
-            if (mov.includes('CHECKR') || mov.includes('ABACUS')) return 'SaaS/Tools';
-            if (mov.includes('GITHUB') || mov.includes('GIT')) return 'Code/Git';
-            if (mov.includes('DIGITAL OCEAN') || mov.includes('DIGITALOCEAN')) return 'Cloud/Hosting';
-            return 'Outros';
         }
 
         function populateTransactionsTable() {
@@ -680,9 +884,6 @@
 
             renderTransactionsTable();
         }
-
-        // Inicializar quando a página carregar
-        window.addEventListener('load', loadData);
     </script>
 </body>
 </html>
