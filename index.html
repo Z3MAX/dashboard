@@ -1,172 +1,688 @@
-// Substitua a seção do chat AI (aproximadamente linha 700-950) por este código corrigido:
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Cartão Corporativo Technology</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-// ===== GEMINI AI INTEGRATION FOR NETLIFY =====
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            line-height: 1.6;
+        }
 
-// Função para inicializar API Key no Netlify
-function initializeApiKey() {
-    // Verificar se existe uma chave salva localmente
-    const storedKey = localStorage.getItem('geminiApiKey');
-    if (storedKey) {
-        geminiApiKey = storedKey;
-        document.getElementById('apiKeySection').style.display = 'none';
-        return true;
-    }
-    
-    // Mostrar seção de configuração se não houver chave
-    document.getElementById('apiKeySection').style.display = 'block';
-    return false;
-}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-// Função para salvar chave da API
-function saveApiKey() {
-    const apiKey = document.getElementById('apiKeyInput').value.trim();
-    if (apiKey) {
-        localStorage.setItem('geminiApiKey', apiKey);
-        geminiApiKey = apiKey;
-        document.getElementById('apiKeySection').style.display = 'none';
-        addMessage('🔑 Chave da API salva com sucesso! Agora posso responder suas perguntas com IA avançada.', 'assistant');
-    } else {
-        alert('Por favor, insira uma chave da API válida.');
-    }
-}
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
 
-// Função para verificar se a API está configurada
-function checkApiConfiguration() {
-    // Primeiro tentar via função Netlify (se a variável de ambiente estiver configurada)
-    // Se não funcionar, usar a chave local
-    return geminiApiKey !== '' || true; // Sempre retorna true para tentar a função Netlify primeiro
-}
+        .header h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
 
-// Função para processar resposta da IA com Gemini
-async function processAIResponse(question) {
-    isTyping = true;
-    showTypingIndicator();
-    
-    try {
-        let response;
-        
-        // Primeiro tentar via função Netlify
-        try {
-            response = await callGeminiViaNetlify(question);
-        } catch (error) {
-            console.log('Função Netlify falhou, tentando API direta:', error);
-            
-            // Fallback para API direta se houver chave local
-            if (geminiApiKey) {
-                response = await callGeminiDirectly(question);
+        .header p {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .metric strong {
+            color: #2c3e50;
+        }
+
+        .metric .value {
+            color: #27ae60;
+            font-weight: bold;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-card h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 1.4em;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .transactions-table {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin-top: 30px;
+        }
+
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .filter-controls {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select, input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .category-card {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+
+        .total-section {
+            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .total-section h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .total-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .total-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .total-item h4 {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .total-item .amount {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏢 Dashboard Cartão Corporativo Technology</h1>
+            <p>Análise Completa dos Gastos - Maio e Julho 2025</p>
+        </div>
+
+        <div class="total-section">
+            <h2>📊 Resumo Executivo</h2>
+            <div class="total-grid">
+                <div class="total-item">
+                    <h4>Total de Transações</h4>
+                    <div class="amount" id="total-transactions">-</div>
+                </div>
+                <div class="total-item">
+                    <h4>Total em USD</h4>
+                    <div class="amount" id="total-usd">-</div>
+                </div>
+                <div class="total-item">
+                    <h4>Total em BRL</h4>
+                    <div class="amount" id="total-brl">-</div>
+                </div>
+                <div class="total-item">
+                    <h4>Ticket Médio</h4>
+                    <div class="amount" id="avg-ticket">-</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-cards">
+            <div class="card">
+                <h3>📅 Maio 2025</h3>
+                <div class="metric">
+                    <span><strong>Transações:</strong></span>
+                    <span class="value" id="maio-transactions">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Total USD:</strong></span>
+                    <span class="value" id="maio-usd">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Total BRL:</strong></span>
+                    <span class="value" id="maio-brl">-</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📅 Julho 2025</h3>
+                <div class="metric">
+                    <span><strong>Transações:</strong></span>
+                    <span class="value" id="julho-transactions">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Total USD:</strong></span>
+                    <span class="value" id="julho-usd">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Total BRL:</strong></span>
+                    <span class="value" id="julho-brl">-</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Comparativo</h3>
+                <div class="metric">
+                    <span><strong>Variação Transações:</strong></span>
+                    <span class="value" id="var-transactions">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Variação USD:</strong></span>
+                    <span class="value" id="var-usd">-</span>
+                </div>
+                <div class="metric">
+                    <span><strong>Variação BRL:</strong></span>
+                    <span class="value" id="var-brl">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <h3>💰 Gastos por Mês (BRL)</h3>
+                <div class="chart-container">
+                    <canvas id="monthlyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>🏷️ Gastos por Categoria</h3>
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>📊 Comparativo USD vs BRL</h3>
+                <div class="chart-container">
+                    <canvas id="currencyChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <h3>📈 Distribuição de Transações</h3>
+                <div class="chart-container">
+                    <canvas id="transactionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="filter-controls">
+            <div class="filter-group">
+                <label><strong>Filtrar por:</strong></label>
+                <select id="monthFilter">
+                    <option value="all">Todos os Meses</option>
+                    <option value="Maio 2025">Maio 2025</option>
+                    <option value="Julho 2025">Julho 2025</option>
+                </select>
+                <select id="categoryFilter">
+                    <option value="all">Todas as Categorias</option>
+                </select>
+                <input type="text" id="searchFilter" placeholder="Buscar por movimentação...">
+            </div>
+        </div>
+
+        <div class="transactions-table">
+            <h3>📋 Detalhamento Completo das Transações</h3>
+            <div class="table-container">
+                <table id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th>Mês</th>
+                            <th>Profissional</th>
+                            <th>Data</th>
+                            <th>Movimentação</th>
+                            <th>Categoria</th>
+                            <th>Valor USD</th>
+                            <th>Valor BRL</th>
+                            <th>Relatório</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados serão carregados do window.dashboardData
+        let data = null;
+        let filteredData = [];
+        let charts = {};
+
+        async function loadData() {
+            // Aguardar dados estarem disponíveis
+            if (window.dashboardData) {
+                data = window.dashboardData;
+                initializeDashboard();
             } else {
-                throw new Error('Nenhuma configuração de API disponível');
+                // Dados mock para desenvolvimento
+                console.log("Usando dados mock - em produção os dados virão do processamento Excel");
+                data = {
+                    totalsMaio: {transacoes: 34, usd: 12383.29, brl: 89222.93},
+                    totalsJulho: {transacoes: 73, usd: 9798.81, brl: 31322.05},
+                    allTransactions: [],
+                    categorizedData: {maio: {}, julho: {}}
+                };
+                initializeDashboard();
             }
         }
-        
-        hideTypingIndicator();
-        addMessage(response, 'assistant');
-        
-    } catch (error) {
-        hideTypingIndicator();
-        console.error('Erro ao processar resposta:', error);
-        
-        const errorResponse = `❌ <strong>Erro ao conectar com o Gemini AI.</strong><br><br>
-        ${error.message.includes('API') ? 'Verifique sua chave da API.' : 'Erro de conexão.'}<br><br>
-        Usando sistema local como backup...<br><br>
-        ${generateLocalAIResponse(question)}`;
-        
-        addMessage(errorResponse, 'assistant');
-    }
-    
-    isTyping = false;
-}
 
-// Função para chamar Gemini via função Netlify
-async function callGeminiViaNetlify(question) {
-    const prompt = createPromptForGemini(question);
-    
-    const response = await fetch('/.netlify/functions/gemini-chat', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            message: prompt
-        })
-    });
+        function formatCurrency(value, currency = 'BRL') {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: currency
+            }).format(value);
+        }
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Erro na função Netlify: ${response.status} - ${errorData.error || 'Erro desconhecido'}`);
-    }
+        function initializeDashboard() {
+            updateSummaryCards();
+            createCharts();
+            populateFilters();
+            populateTransactionsTable();
+        }
 
-    const data = await response.json();
-    
-    if (data.response) {
-        return data.response;
-    } else {
-        throw new Error('Resposta inválida da função Netlify');
-    }
-}
+        function updateSummaryCards() {
+            const totalTransactions = data.totalsMaio.transacoes + data.totalsJulho.transacoes;
+            const totalUSD = data.totalsMaio.usd + data.totalsJulho.usd;
+            const totalBRL = data.totalsMaio.brl + data.totalsJulho.brl;
+            const avgTicket = totalBRL / totalTransactions;
 
-// Função para chamar a API do Gemini diretamente
-async function callGeminiDirectly(question) {
-    if (!geminiApiKey) {
-        throw new Error('Chave da API não configurada');
-    }
-    
-    const prompt = createPromptForGemini(question);
-    
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            contents: [{
-                parts: [{
-                    text: prompt
-                }]
-            }],
-            generationConfig: {
-                temperature: 0.7,
-                topK: 40,
-                topP: 0.95,
-                maxOutputTokens: 1024,
-            }
-        })
-    });
+            // Totais gerais
+            document.getElementById('total-transactions').textContent = totalTransactions;
+            document.getElementById('total-usd').textContent = formatCurrency(totalUSD, 'USD');
+            document.getElementById('total-brl').textContent = formatCurrency(totalBRL);
+            document.getElementById('avg-ticket').textContent = formatCurrency(avgTicket);
 
-    if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(`Erro na API do Gemini: ${response.status} - ${errorData.error?.message || 'Erro desconhecido'}`);
-    }
+            // Maio
+            document.getElementById('maio-transactions').textContent = data.totalsMaio.transacoes;
+            document.getElementById('maio-usd').textContent = formatCurrency(data.totalsMaio.usd, 'USD');
+            document.getElementById('maio-brl').textContent = formatCurrency(data.totalsMaio.brl);
 
-    const data = await response.json();
-    
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        return data.candidates[0].content.parts[0].text;
-    } else {
-        throw new Error('Resposta inválida da API do Gemini');
-    }
-}
+            // Julho
+            document.getElementById('julho-transactions').textContent = data.totalsJulho.transacoes;
+            document.getElementById('julho-usd').textContent = formatCurrency(data.totalsJulho.usd, 'USD');
+            document.getElementById('julho-brl').textContent = formatCurrency(data.totalsJulho.brl);
 
-// Atualizar a função initDashboard para incluir a inicialização da API
-function initDashboard() {
-    try {
-        // Primeiro configurar os listeners
-        setupEventListeners();
-        
-        // Inicializar a API Key
-        initializeApiKey();
-        
-        // Depois atualizar dados (sem gráficos ainda)
-        filterTransactions();
-        updateStats();
-        populateTopServices();
-        populateTransactionsTable();
-        
-        // Por último criar os gráficos
-        createCharts();
-        
-        console.log('Dashboard inicializado com sucesso!');
-    } catch (error) {
-        console.error('Erro ao inicializar dashboard:', error);
-    }
-}
+            // Variações
+            const varTransactions = ((data.totalsJulho.transacoes - data.totalsMaio.transacoes) / data.totalsMaio.transacoes * 100).toFixed(1);
+            const varUSD = ((data.totalsJulho.usd - data.totalsMaio.usd) / data.totalsMaio.usd * 100).toFixed(1);
+            const varBRL = ((data.totalsJulho.brl - data.totalsMaio.brl) / data.totalsMaio.brl * 100).toFixed(1);
+
+            document.getElementById('var-transactions').textContent = `${varTransactions > 0 ? '+' : ''}${varTransactions}%`;
+            document.getElementById('var-usd').textContent = `${varUSD > 0 ? '+' : ''}${varUSD}%`;
+            document.getElementById('var-brl').textContent = `${varBRL > 0 ? '+' : ''}${varBRL}%`;
+        }
+
+        function createCharts() {
+            createMonthlyChart();
+            createCategoryChart();
+            createCurrencyChart();
+            createTransactionChart();
+        }
+
+        function createMonthlyChart() {
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            charts.monthly = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Maio 2025', 'Julho 2025'],
+                    datasets: [{
+                        label: 'Gastos em BRL',
+                        data: [data.totalsMaio.brl, data.totalsJulho.brl],
+                        backgroundColor: ['#3498db', '#e74c3c'],
+                        borderColor: ['#2980b9', '#c0392b'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCategoryChart() {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            
+            // Combinar categorias de ambos os meses
+            const allCategories = new Set();
+            Object.keys(data.categorizedData.maio || {}).forEach(cat => allCategories.add(cat));
+            Object.keys(data.categorizedData.julho || {}).forEach(cat => allCategories.add(cat));
+            
+            const categories = Array.from(allCategories);
+            const maioData = categories.map(cat => (data.categorizedData.maio[cat] || {brl: 0}).brl);
+            const julhoData = categories.map(cat => (data.categorizedData.julho[cat] || {brl: 0}).brl);
+
+            charts.category = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: categories.map(cat => {
+                            const maio = (data.categorizedData.maio[cat] || {brl: 0}).brl;
+                            const julho = (data.categorizedData.julho[cat] || {brl: 0}).brl;
+                            return maio + julho;
+                        }),
+                        backgroundColor: [
+                            '#3498db', '#e74c3c', '#f39c12', '#27ae60', 
+                            '#9b59b6', '#1abc9c', '#34495e', '#e67e22'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createCurrencyChart() {
+            const ctx = document.getElementById('currencyChart').getContext('2d');
+            charts.currency = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Maio 2025', 'Julho 2025'],
+                    datasets: [{
+                        label: 'USD',
+                        data: [data.totalsMaio.usd, data.totalsJulho.usd],
+                        borderColor: '#27ae60',
+                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
+                        tension: 0.4
+                    }, {
+                        label: 'BRL',
+                        data: [data.totalsMaio.brl, data.totalsJulho.brl],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function createTransactionChart() {
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            charts.transaction = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Maio 2025', 'Julho 2025'],
+                    datasets: [{
+                        label: 'Número de Transações',
+                        data: [data.totalsMaio.transacoes, data.totalsJulho.transacoes],
+                        backgroundColor: ['#9b59b6', '#f39c12'],
+                        borderColor: ['#8e44ad', '#e67e22'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateFilters() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const allCategories = new Set();
+            
+            Object.keys(data.categorizedData.maio || {}).forEach(cat => allCategories.add(cat));
+            Object.keys(data.categorizedData.julho || {}).forEach(cat => allCategories.add(cat));
+            
+            Array.from(allCategories).forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+
+            // Event listeners para filtros
+            document.getElementById('monthFilter').addEventListener('change', filterTransactions);
+            document.getElementById('categoryFilter').addEventListener('change', filterTransactions);
+            document.getElementById('searchFilter').addEventListener('input', filterTransactions);
+        }
+
+        function categorizeTransaction(movimentacao) {
+            const mov = movimentacao.toUpperCase();
+            if (mov.includes('OPENAI') || mov.includes('ANTHROPIC') || mov.includes('CLAUDE')) return 'AI/ML';
+            if (mov.includes('MERCADOLIVRE') || mov.includes('MERCADOLIV')) return 'E-commerce';
+            if (mov.includes('KABUM') || mov.includes('HUB*KABUM')) return 'Hardware';
+            if (mov.includes('MIRO') || mov.includes('BOLT') || mov.includes('STACKBLITZ')) return 'Dev Tools';
+            if (mov.includes('CHECKR') || mov.includes('ABACUS')) return 'SaaS/Tools';
+            if (mov.includes('GITHUB') || mov.includes('GIT')) return 'Code/Git';
+            if (mov.includes('DIGITAL OCEAN') || mov.includes('DIGITALOCEAN')) return 'Cloud/Hosting';
+            return 'Outros';
+        }
+
+        function populateTransactionsTable() {
+            filteredData = [...(data.allTransactions || [])];
+            renderTransactionsTable();
+        }
+
+        function renderTransactionsTable() {
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+
+            filteredData.forEach(transaction => {
+                const row = document.createElement('tr');
+                const category = categorizeTransaction(transaction.movimentacao);
+                
+                row.innerHTML = `
+                    <td>${transaction.mes}</td>
+                    <td>${transaction.profissional}</td>
+                    <td>${transaction.data}</td>
+                    <td>${transaction.movimentacao}</td>
+                    <td><span style="background: #3498db; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8em;">${category}</span></td>
+                    <td>${transaction.valorUSD ? formatCurrency(transaction.valorUSD, 'USD') : '-'}</td>
+                    <td>${transaction.valorBRL ? formatCurrency(transaction.valorBRL) : '-'}</td>
+                    <td>${transaction.relatorio || '-'}</td>
+                    <td>${transaction.status || '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterTransactions() {
+            const monthFilter = document.getElementById('monthFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            filteredData = (data.allTransactions || []).filter(transaction => {
+                const matchMonth = monthFilter === 'all' || transaction.mes === monthFilter;
+                const matchCategory = categoryFilter === 'all' || categorizeTransaction(transaction.movimentacao) === categoryFilter;
+                const matchSearch = transaction.movimentacao.toLowerCase().includes(searchFilter);
+                
+                return matchMonth && matchCategory && matchSearch;
+            });
+
+            renderTransactionsTable();
+        }
+
+        // Inicializar quando a página carregar
+        window.addEventListener('load', loadData);
+    </script>
+</body>
+</html>
