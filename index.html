@@ -20,7 +20,134 @@
             line-height: 1.6;
         }
 
-        .container {
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            backdrop-filter: blur(10px);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            font-size: 2.2em;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .form-group input {
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 10px rgba(52, 152, 219, 0.2);
+        }
+
+        .login-btn {
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            background: linear-gradient(45deg, #2980b9, #1f5582);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .login-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
@@ -426,7 +553,22 @@
             margin-bottom: 30px;
         }
 
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+
         @media (max-width: 768px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .login-header h1 {
+                font-size: 1.8em;
+            }
+            
             .file-item-content {
                 grid-template-columns: 1fr;
             }
@@ -434,15 +576,49 @@
             .upload-controls {
                 flex-direction: column;
             }
+            
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🏢 Dashboard Cartão Corporativo Technology</h1>
-            <p>Análise Completa dos Gastos Corporativos - Múltiplos Períodos</p>
+    <!-- Tela de Login -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <div class="login-header">
+                <h1>🔐 Acesso Restrito</h1>
+                <p>Dashboard Cartão Corporativo Technology</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">👤 Usuário:</label>
+                    <input type="text" id="username" name="username" required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="password">🔑 Senha:</label>
+                    <input type="password" id="password" name="password" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="login-btn">🚀 Entrar</button>
+                <div id="loginError" class="login-error hidden"></div>
+            </form>
         </div>
+    </div>
+
+    <!-- Dashboard Principal -->
+    <div id="mainDashboard" class="container hidden">
+        <div class="header">
+            <div class="header-content">
+                <div>
+                    <h1>🏢 Dashboard Cartão Corporativo Technology</h1>
+                    <p>Análise Completa dos Gastos Corporativos - Múltiplos Períodos</p>
+                </div>
+                <button id="logoutBtn" class="logout-btn">🚪 Sair</button>
+            </div>
+        </div>
+    </div>
 
         <div class="file-upload">
             <h3>📂 Carregar Arquivos Excel</h3>
@@ -563,16 +739,123 @@
     </div>
 
     <script>
+        // Variáveis globais
         let data = null;
         let filteredData = [];
         let charts = {};
         let fileItems = [];
         let fileIdCounter = 0;
+        let isLoggedIn = false;
 
-        // Event listeners
-        document.getElementById('addFileBtn').addEventListener('click', addFileItem);
-        document.getElementById('processBtn').addEventListener('click', processFiles);
-        document.getElementById('clearAllBtn').addEventListener('click', clearAllFiles);
+        // Credenciais (em produção, use autenticação adequada)
+        const CREDENTIALS = {
+            username: 'admin',
+            password: 'int@789!'
+        };
+
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginStatus();
+            initializeEventListeners();
+        });
+
+        function initializeEventListeners() {
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Dashboard
+            document.getElementById('addFileBtn').addEventListener('click', addFileItem);
+            document.getElementById('processBtn').addEventListener('click', processFiles);
+            document.getElementById('clearAllBtn').addEventListener('click', clearAllFiles);
+        }
+
+        function checkLoginStatus() {
+            // Verificar se já está logado (usando sessionStorage)
+            const loginStatus = sessionStorage.getItem('dashboardLogin');
+            if (loginStatus === 'true') {
+                showDashboard();
+            } else {
+                showLogin();
+            }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
+                sessionStorage.setItem('dashboardLogin', 'true');
+                showDashboard();
+                clearLoginForm();
+            } else {
+                errorDiv.textContent = '❌ Usuário ou senha incorretos!';
+                errorDiv.classList.remove('hidden');
+                
+                // Limpar erro após 3 segundos
+                setTimeout(() => {
+                    errorDiv.classList.add('hidden');
+                }, 3000);
+                
+                // Shake effect
+                const loginContainer = document.querySelector('.login-container');
+                loginContainer.style.animation = 'shake 0.5s ease-in-out';
+                setTimeout(() => {
+                    loginContainer.style.animation = '';
+                }, 500);
+            }
+        }
+
+        function handleLogout() {
+            sessionStorage.removeItem('dashboardLogin');
+            clearDashboardData();
+            showLogin();
+        }
+
+        function showLogin() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainDashboard').classList.add('hidden');
+            isLoggedIn = false;
+        }
+
+        function showDashboard() {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            isLoggedIn = true;
+            
+            // Adicionar um arquivo inicial se não houver nenhum
+            if (fileItems.length === 0) {
+                addFileItem();
+            }
+        }
+
+        function clearLoginForm() {
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+        function clearDashboardData() {
+            // Limpar dados do dashboard
+            data = null;
+            filteredData = [];
+            fileItems = [];
+            fileIdCounter = 0;
+            
+            // Limpar containers
+            document.getElementById('filesContainer').innerHTML = '';
+            document.getElementById('dashboardContent').classList.add('hidden');
+            document.getElementById('uploadStatus').innerHTML = '';
+            
+            // Destruir gráficos
+            Object.values(charts).forEach(chart => {
+                if (chart) chart.destroy();
+            });
+            charts = {};
+        }
 
         function addFileItem() {
             const fileId = `file_${fileIdCounter++}`;
@@ -1107,8 +1390,8 @@
             renderTransactionsTable();
         }
 
-        // Adicionar um arquivo inicial
-        addFileItem();
+        // Adicionar um arquivo inicial quando o dashboard for mostrado
+        // (removido daqui pois agora é chamado em showDashboard())
     </script>
 </body>
 </html>
