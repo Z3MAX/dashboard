@@ -766,7 +766,10 @@
 
         function categorizeTransaction(movimentacao) {
             const mov = movimentacao.toUpperCase();
-            if (mov.includes('OPENAI') || mov.includes('ANTHROPIC') || mov.includes('CLAUDE')) return 'AI/ML';
+            if (mov.includes('OPENAI') || mov.includes('ANTHROPIC') || mov.includes('CLAUDE') || 
+                mov.includes('SURFERSEO') || mov.includes('HUGGINGFACE') || mov.includes('MERLIN') || 
+                mov.includes('PERPLEXITY') || mov.includes('CURSOR') || mov.includes('ZAPIER') || 
+                mov.includes('N8N') || mov.includes('CREW AI') || mov.includes('DEEPL')) return 'AI/ML';
             if (mov.includes('MERCADOLIVRE') || mov.includes('MERCADOLIV')) return 'E-commerce';
             if (mov.includes('KABUM') || mov.includes('HUB*KABUM')) return 'Hardware';
             if (mov.includes('MIRO') || mov.includes('BOLT') || mov.includes('STACKBLITZ') || mov.includes('VUE')) return 'Dev Tools';
