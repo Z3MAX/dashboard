@@ -6,7 +6,24 @@
     <title>Dashboard Cartão Corporativo Technology</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-red: #8b0304;
+            --primary-red-light: rgba(139, 3, 4, 0.1);
+            --primary-red-medium: rgba(139, 3, 4, 0.2);
+            --primary-red-dark: #6b0203;
+            --white: #ffffff;
+            --off-white: #fafafa;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #666666;
+            --text-dark: #1a1a1a;
+            --shadow-light: 0 2px 20px rgba(139, 3, 4, 0.08);
+            --shadow-medium: 0 8px 40px rgba(139, 3, 4, 0.12);
+            --shadow-heavy: 0 20px 60px rgba(139, 3, 4, 0.15);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -14,532 +31,865 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #fefefe 0%, #f8f8f8 100%);
+            color: var(--text-dark);
             line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Geometric background pattern */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(90deg, transparent 49%, rgba(139, 3, 4, 0.02) 50%, transparent 51%),
+                linear-gradient(0deg, transparent 49%, rgba(139, 3, 4, 0.02) 50%, transparent 51%);
+            background-size: 100px 100px;
+            z-index: -1;
+            animation: patternShift 30s linear infinite;
+        }
+
+        @keyframes patternShift {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(100px, 100px); }
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 2rem;
         }
 
+        /* Innovative header design */
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, var(--primary-red-light) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: -1;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
         }
 
         .header h1 {
-            font-size: 2.5em;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 700;
+            color: var(--primary-red);
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+            animation: slideInFromTop 1s ease-out;
         }
 
         .header p {
-            font-size: 1.2em;
-            color: #7f8c8d;
+            font-size: 1.2rem;
+            color: var(--dark-gray);
+            font-weight: 400;
+            animation: slideInFromBottom 1s ease-out 0.2s both;
+        }
+
+        @keyframes slideInFromTop {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes slideInFromBottom {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Floating card design */
+        .floating-card {
+            background: var(--white);
+            border-radius: 24px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(139, 3, 4, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .floating-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-red) 0%, transparent 100%);
+        }
+
+        .floating-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
         }
 
         .file-upload {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            margin-bottom: 3rem;
+            animation: fadeInScale 0.8s ease-out 0.4s both;
         }
 
-        .file-upload h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
+        @keyframes fadeInScale {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
             text-align: center;
         }
 
-        .upload-controls {
+        .section-subtitle {
+            color: var(--dark-gray);
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+
+        /* Modern button system */
+        .button-group {
             display: flex;
-            gap: 15px;
+            gap: 1rem;
             justify-content: center;
-            align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 2rem;
         }
 
-        .add-file-btn {
-            background: #27ae60;
-            color: white;
+        .btn {
+            padding: 1rem 2rem;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 500;
             cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 0.5rem;
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            min-width: 160px;
+            justify-content: center;
         }
 
-        .add-file-btn:hover {
-            background: #219a52;
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
         }
 
-        .process-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s ease;
+        .btn:hover::before {
+            left: 100%;
         }
 
-        .process-btn:hover {
-            background: #2980b9;
+        .btn-primary {
+            background: var(--primary-red);
+            color: var(--white);
+            box-shadow: 0 4px 20px rgba(139, 3, 4, 0.3);
         }
 
-        .process-btn:disabled {
-            background: #bdc3c7;
+        .btn-primary:hover {
+            background: var(--primary-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 3, 4, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--primary-red);
+            border: 2px solid var(--primary-red);
+            box-shadow: 0 4px 20px rgba(139, 3, 4, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-red);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(139, 3, 4, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--dark-gray);
+            border: 2px solid var(--medium-gray);
+        }
+
+        .btn-outline:hover {
+            background: var(--light-gray);
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: var(--light-gray);
+            color: var(--dark-gray);
             cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
         }
 
-        .clear-btn {
-            background: #e74c3c;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background 0.3s ease;
-        }
-
-        .clear-btn:hover {
-            background: #c0392b;
-        }
-
-        .files-container {
+        /* File item cards with modern design */
+        .files-grid {
             display: grid;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
-        .file-item {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            transition: border-color 0.3s ease;
+        .file-card {
+            background: var(--white);
+            border: 2px solid var(--light-gray);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            animation: slideInLeft 0.6s ease-out;
         }
 
-        .file-item.has-file {
-            border-color: #27ae60;
-            background: #d5f4e6;
+        @keyframes slideInLeft {
+            from { transform: translateX(-50px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
         }
 
-        .file-item-header {
+        .file-card:hover {
+            border-color: var(--primary-red);
+            box-shadow: var(--shadow-medium);
+            transform: translateY(-4px);
+        }
+
+        .file-card.has-file {
+            border-color: var(--primary-red);
+            background: linear-gradient(135deg, var(--white) 0%, var(--primary-red-light) 100%);
+        }
+
+        .file-card-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
         }
 
-        .file-item-title {
-            font-weight: bold;
-            color: #2c3e50;
+        .file-card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-dark);
         }
 
-        .remove-file-btn {
-            background: #e74c3c;
-            color: white;
+        .remove-btn {
+            background: none;
             border: none;
-            padding: 6px 12px;
-            border-radius: 5px;
+            color: var(--primary-red);
             cursor: pointer;
-            font-size: 12px;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 1.2rem;
         }
 
-        .file-item-content {
+        .remove-btn:hover {
+            background: var(--primary-red-light);
+            transform: scale(1.1);
+        }
+
+        .file-card-content {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 15px;
-            align-items: center;
+            gap: 2rem;
+            align-items: start;
         }
 
-        .month-input {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            width: 100%;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
-        .month-input:focus {
+        .form-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            background: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
             outline: none;
-            border-color: #3498db;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px var(--primary-red-light);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            border: 2px dashed var(--medium-gray);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+            background: var(--off-white);
+        }
+
+        .file-input-wrapper:hover {
+            border-color: var(--primary-red);
+            background: var(--primary-red-light);
+        }
+
+        .file-input-wrapper.has-file {
+            border-color: var(--primary-red);
+            background: var(--primary-red-light);
         }
 
         .file-input {
-            padding: 10px;
-            border: 2px dashed #3498db;
-            border-radius: 8px;
-            background: white;
+            position: absolute;
+            opacity: 0;
             width: 100%;
+            height: 100%;
             cursor: pointer;
         }
 
+        .file-input-content {
+            pointer-events: none;
+        }
+
         .file-status {
-            font-size: 12px;
-            margin-top: 5px;
-            padding: 5px;
-            border-radius: 4px;
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
 
         .status-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
-        .status-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        /* Executive summary with geometric design */
+        .executive-summary {
+            background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+            color: var(--white);
+            border-radius: 32px;
+            padding: 4rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-heavy);
         }
 
-        .summary-cards {
+        .executive-summary::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .executive-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        .metric-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        .metric-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.25);
         }
 
-        .card h3 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 10px;
+        .metric-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .metric {
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        /* Modern cards grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .info-card {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--light-gray);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .info-card:hover {
+            transform: translateY(-12px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-metric {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            align-items: center;
+            padding: 1rem;
+            background: var(--off-white);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-red);
         }
 
-        .metric strong {
-            color: #2c3e50;
+        .metric-name {
+            font-weight: 500;
+            color: var(--text-dark);
         }
 
-        .metric .value {
-            color: #27ae60;
-            font-weight: bold;
+        .metric-amount {
+            font-weight: 600;
+            color: var(--primary-red);
+            font-size: 1.1rem;
         }
 
-        .charts-container {
+        /* Charts container with modern styling */
+        .charts-section {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-            gap: 30px;
-            margin-bottom: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(700px, 1fr));
+            gap: 3rem;
+            margin-bottom: 4rem;
         }
 
-        .chart-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        .chart-container-wrapper {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 3rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--light-gray);
+            transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
-        .chart-card h3 {
-            color: #2c3e50;
-            margin-bottom: 20px;
+        .chart-container-wrapper:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .chart-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--text-dark);
             text-align: center;
-            font-size: 1.4em;
+            margin-bottom: 2rem;
         }
 
         .chart-container {
             position: relative;
             height: 400px;
-            margin-bottom: 20px;
         }
 
-        .transactions-table {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            margin-top: 30px;
+        /* Filters with sleek design */
+        .filters-section {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--light-gray);
         }
 
-        .table-container {
-            max-height: 500px;
+        .filters-grid {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="text"] {
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 12px;
+            background: var(--white);
+            font-size: 1rem;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        select:focus, input[type="text"]:focus {
+            outline: none;
+            border-color: var(--primary-red);
+            box-shadow: 0 0 0 3px var(--primary-red-light);
+        }
+
+        /* Modern table design */
+        .table-section {
+            background: var(--white);
+            border-radius: 28px;
+            padding: 3rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid var(--light-gray);
+        }
+
+        .table-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .table-wrapper {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--light-gray);
+            max-height: 600px;
             overflow-y: auto;
-            border-radius: 10px;
-            border: 1px solid #e0e0e0;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.9em;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
+            font-size: 0.95rem;
         }
 
         th {
-            background: #34495e;
-            color: white;
+            background: var(--primary-red);
+            color: var(--white);
+            padding: 1.5rem 1rem;
             font-weight: 600;
+            text-align: left;
             position: sticky;
             top: 0;
             z-index: 10;
         }
 
+        td {
+            padding: 1.25rem 1rem;
+            border-bottom: 1px solid var(--light-gray);
+            color: var(--text-dark);
+        }
+
         tr:hover {
-            background: #f8f9fa;
+            background: var(--off-white);
         }
 
-        .filter-controls {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        .category-tag {
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
         }
 
-        .filter-group {
+        /* Status messages */
+        .message {
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin: 1rem 0;
+            font-weight: 500;
             display: flex;
-            gap: 15px;
             align-items: center;
-            flex-wrap: wrap;
+            gap: 1rem;
         }
 
-        select, input {
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
+        .message.success {
+            background: rgba(34, 197, 94, 0.1);
+            color: #16a34a;
+            border: 1px solid rgba(34, 197, 94, 0.2);
         }
 
-        select:focus, input:focus {
-            outline: none;
-            border-color: #3498db;
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
 
-        .total-section {
-            background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
-            text-align: center;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .total-section h2 {
-            font-size: 2em;
-            margin-bottom: 20px;
-        }
-
-        .total-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 20px;
-        }
-
-        .total-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-        }
-
-        .total-item h4 {
-            font-size: 1.1em;
-            margin-bottom: 10px;
-        }
-
-        .total-item .amount {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-
-        .loading {
-            text-align: center;
-            color: #7f8c8d;
-            font-style: italic;
+        .message.info {
+            background: var(--primary-red-light);
+            color: var(--primary-red);
+            border: 1px solid var(--primary-red-medium);
         }
 
         .hidden {
             display: none;
         }
 
-        .error {
-            color: #e74c3c;
-            background: #f8d7da;
-            border: 1px solid #f5c6cb;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        .success {
-            color: #155724;
-            background: #d4edda;
-            border: 1px solid #c3e6cb;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-
-        .monthly-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
+        /* Responsive design */
         @media (max-width: 768px) {
-            .file-item-content {
-                grid-template-columns: 1fr;
+            .container {
+                padding: 1rem;
             }
-            
-            .upload-controls {
+
+            .file-card-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .button-group {
                 flex-direction: column;
             }
+
+            .btn {
+                width: 100%;
+            }
+
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .executive-summary {
+                padding: 2rem;
+            }
+
+            .executive-title {
+                font-size: 2rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-red);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-red-dark);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🏢 Dashboard Cartão Corporativo Technology</h1>
-            <p>Análise Completa dos Gastos Corporativos - Múltiplos Períodos</p>
-        </div>
+        <header class="header">
+            <h1>Dashboard Cartão Corporativo</h1>
+            <p>Análise Avançada de Gastos Corporativos - Interface Minimalista</p>
+        </header>
 
-        <div class="file-upload">
-            <h3>📂 Carregar Arquivos Excel</h3>
-            <p>Adicione quantos arquivos desejar e especifique o período de cada um</p>
+        <section class="file-upload floating-card">
+            <h2 class="section-title">Importação de Dados</h2>
+            <p class="section-subtitle">Carregue seus arquivos Excel para análise detalhada dos gastos</p>
             
-            <div class="upload-controls">
-                <button id="addFileBtn" class="add-file-btn">
-                    ➕ Adicionar Arquivo
+            <div class="button-group">
+                <button id="addFileBtn" class="btn btn-primary">
+                    <span>+</span> Adicionar Arquivo
                 </button>
-                <button id="processBtn" class="process-btn" disabled>
-                    📊 Processar Dados
+                <button id="processBtn" class="btn btn-secondary" disabled>
+                    <span>⚡</span> Processar Dados
                 </button>
-                <button id="clearAllBtn" class="clear-btn">
-                    🗑️ Limpar Tudo
+                <button id="clearAllBtn" class="btn btn-outline">
+                    <span>×</span> Limpar Tudo
                 </button>
             </div>
 
-            <div id="filesContainer" class="files-container">
-                <!-- Arquivos serão adicionados dinamicamente aqui -->
+            <div id="filesContainer" class="files-grid">
+                <!-- Files will be added dynamically -->
             </div>
 
             <div id="uploadStatus"></div>
-        </div>
+        </section>
 
         <div id="dashboardContent" class="hidden">
-            <div class="total-section">
-                <h2>📊 Resumo Executivo</h2>
-                <div class="total-grid">
-                    <div class="total-item">
-                        <h4>Total de Transações</h4>
-                        <div class="amount" id="total-transactions">-</div>
+            <section class="executive-summary">
+                <h2 class="executive-title">Resumo Executivo</h2>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">Total de Transações</div>
+                        <div class="metric-value" id="total-transactions">-</div>
                     </div>
-                    <div class="total-item">
-                        <h4>Total em USD</h4>
-                        <div class="amount" id="total-usd">-</div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total em USD</div>
+                        <div class="metric-value" id="total-usd">-</div>
                     </div>
-                    <div class="total-item">
-                        <h4>Total em BRL</h4>
-                        <div class="amount" id="total-brl">-</div>
+                    <div class="metric-card">
+                        <div class="metric-label">Total em BRL</div>
+                        <div class="metric-value" id="total-brl">-</div>
                     </div>
-                    <div class="total-item">
-                        <h4>Ticket Médio</h4>
-                        <div class="amount" id="avg-ticket">-</div>
+                    <div class="metric-card">
+                        <div class="metric-label">Ticket Médio</div>
+                        <div class="metric-value" id="avg-ticket">-</div>
                     </div>
                 </div>
+            </section>
+
+            <div id="monthlyCards" class="cards-grid">
+                <!-- Monthly cards will be generated here -->
             </div>
 
-            <div id="monthlyCards" class="monthly-cards">
-                <!-- Cards mensais serão gerados dinamicamente -->
-            </div>
-
-            <div class="charts-container">
-                <div class="chart-card">
-                    <h3>💰 Gastos por Período (BRL)</h3>
+            <section class="charts-section">
+                <div class="chart-container-wrapper">
+                    <h3 class="chart-title">Gastos por Período (BRL)</h3>
                     <div class="chart-container">
                         <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
 
-                <div class="chart-card">
-                    <h3>🏷️ Gastos por Categoria</h3>
+                <div class="chart-container-wrapper">
+                    <h3 class="chart-title">Distribuição por Categoria</h3>
                     <div class="chart-container">
                         <canvas id="categoryChart"></canvas>
                     </div>
                 </div>
 
-                <div class="chart-card">
-                    <h3>📊 Comparativo USD vs BRL</h3>
+                <div class="chart-container-wrapper">
+                    <h3 class="chart-title">Comparativo USD vs BRL</h3>
                     <div class="chart-container">
                         <canvas id="currencyChart"></canvas>
                     </div>
                 </div>
 
-                <div class="chart-card">
-                    <h3>📈 Distribuição de Transações</h3>
+                <div class="chart-container-wrapper">
+                    <h3 class="chart-title">Volume de Transações</h3>
                     <div class="chart-container">
                         <canvas id="transactionChart"></canvas>
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="filter-controls">
-                <div class="filter-group">
-                    <label><strong>Filtrar por:</strong></label>
-                    <select id="monthFilter">
-                        <option value="all">Todos os Períodos</option>
-                    </select>
-                    <select id="categoryFilter">
-                        <option value="all">Todas as Categorias</option>
-                    </select>
-                    <input type="text" id="searchFilter" placeholder="Buscar por movimentação...">
+            <section class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-item">
+                        <label class="filter-label">Período</label>
+                        <select id="monthFilter">
+                            <option value="all">Todos os Períodos</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">Categoria</label>
+                        <select id="categoryFilter">
+                            <option value="all">Todas as Categorias</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label class="filter-label">Buscar</label>
+                        <input type="text" id="searchFilter" placeholder="Digite para buscar...">
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="transactions-table">
-                <h3>📋 Detalhamento Completo das Transações</h3>
-                <div class="table-container">
+            <section class="table-section">
+                <h3 class="table-title">Detalhamento das Transações</h3>
+                <div class="table-wrapper">
                     <table id="transactionsTable">
                         <thead>
                             <tr>
@@ -558,7 +908,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </section>
         </div>
     </div>
 
@@ -578,31 +928,40 @@
             const fileId = `file_${fileIdCounter++}`;
             const filesContainer = document.getElementById('filesContainer');
             
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.id = fileId;
+            const fileCard = document.createElement('div');
+            fileCard.className = 'file-card';
+            fileCard.id = fileId;
             
-            fileItem.innerHTML = `
-                <div class="file-item-header">
-                    <div class="file-item-title">Arquivo ${fileIdCounter}</div>
-                    <button class="remove-file-btn" onclick="removeFileItem('${fileId}')">❌ Remover</button>
+            fileCard.innerHTML = `
+                <div class="file-card-header">
+                    <div class="file-card-title">Arquivo ${fileIdCounter}</div>
+                    <button class="remove-btn" onclick="removeFileItem('${fileId}')">×</button>
                 </div>
-                <div class="file-item-content">
-                    <div>
-                        <label for="${fileId}_month">Nome/Período:</label>
-                        <input type="text" id="${fileId}_month" class="month-input" placeholder="Ex: Janeiro 2025, Q1 2025, etc." required>
+                <div class="file-card-content">
+                    <div class="form-group">
+                        <label class="form-label">Período</label>
+                        <input type="text" id="${fileId}_month" class="form-input" placeholder="Ex: Janeiro 2025" required>
                     </div>
-                    <div>
-                        <label for="${fileId}_file">Arquivo Excel:</label>
-                        <input type="file" id="${fileId}_file" class="file-input" accept=".xlsx,.xls" required>
+                    <div class="form-group">
+                        <label class="form-label">Arquivo Excel</label>
+                        <div class="file-input-wrapper" onclick="document.getElementById('${fileId}_file').click()">
+                            <input type="file" id="${fileId}_file" class="file-input" accept=".xlsx,.xls" required>
+                            <div class="file-input-content">
+                                <div style="font-size: 2rem; margin-bottom: 1rem;">📁</div>
+                                <div style="font-weight: 500;">Clique para selecionar arquivo</div>
+                                <div style="font-size: 0.9rem; color: var(--dark-gray); margin-top: 0.5rem;">
+                                    Formatos aceitos: .xlsx, .xls
+                                </div>
+                            </div>
+                        </div>
                         <div id="${fileId}_status" class="file-status"></div>
                     </div>
                 </div>
             `;
             
-            filesContainer.appendChild(fileItem);
+            filesContainer.appendChild(fileCard);
             
-            // Adicionar event listeners
+            // Add event listeners
             document.getElementById(`${fileId}_file`).addEventListener('change', function(e) {
                 updateFileStatus(fileId, e.target.files[0]);
                 checkFilesReady();
@@ -615,10 +974,13 @@
         }
 
         function removeFileItem(fileId) {
-            const fileItem = document.getElementById(fileId);
-            fileItem.remove();
-            fileItems = fileItems.filter(id => id !== fileId);
-            checkFilesReady();
+            const fileCard = document.getElementById(fileId);
+            fileCard.style.animation = 'slideInLeft 0.3s ease-in reverse';
+            setTimeout(() => {
+                fileCard.remove();
+                fileItems = fileItems.filter(id => id !== fileId);
+                checkFilesReady();
+            }, 300);
         }
 
         function clearAllFiles() {
@@ -632,14 +994,24 @@
 
         function updateFileStatus(fileId, file) {
             const statusDiv = document.getElementById(`${fileId}_status`);
-            const fileItem = document.getElementById(fileId);
+            const fileCard = document.getElementById(fileId);
+            const wrapper = fileCard.querySelector('.file-input-wrapper');
             
             if (file) {
-                statusDiv.innerHTML = `<div class="status-success">✅ ${file.name} selecionado</div>`;
-                fileItem.classList.add('has-file');
+                statusDiv.innerHTML = `<div class="status-success">✓ ${file.name}</div>`;
+                fileCard.classList.add('has-file');
+                wrapper.classList.add('has-file');
+                wrapper.querySelector('.file-input-content').innerHTML = `
+                    <div style="font-size: 2rem; margin-bottom: 1rem;">✓</div>
+                    <div style="font-weight: 500;">${file.name}</div>
+                    <div style="font-size: 0.9rem; color: var(--dark-gray); margin-top: 0.5rem;">
+                        Arquivo carregado com sucesso
+                    </div>
+                `;
             } else {
                 statusDiv.innerHTML = '';
-                fileItem.classList.remove('has-file');
+                fileCard.classList.remove('has-file');
+                wrapper.classList.remove('has-file');
             }
         }
 
@@ -661,12 +1033,13 @@
 
         function showStatus(message, type = 'info') {
             const statusDiv = document.getElementById('uploadStatus');
-            statusDiv.innerHTML = `<div class="${type}">${message}</div>`;
+            const icons = { success: '✓', error: '⚠', info: 'ℹ' };
+            statusDiv.innerHTML = `<div class="message ${type}"><span>${icons[type]}</span>${message}</div>`;
         }
 
         async function processFiles() {
             try {
-                showStatus('🔄 Processando arquivos...', 'loading');
+                showStatus('Processando arquivos...', 'info');
                 
                 const allData = [];
                 const monthlyTotals = {};
@@ -679,7 +1052,7 @@
                     const file = fileInput.files[0];
                     
                     if (file && monthName) {
-                        showStatus(`🔄 Processando ${monthName}...`, 'loading');
+                        showStatus(`Processando ${monthName}...`, 'info');
                         const processedData = await processExcelFile(file, monthName);
                         allData.push(...processedData.transactions);
                         monthlyTotals[monthName] = processedData.totals;
@@ -698,13 +1071,13 @@
                     categorizedData: categorizedData
                 };
                 
-                showStatus('✅ Arquivos processados com sucesso!', 'success');
+                showStatus('Dados processados com sucesso!', 'success');
                 document.getElementById('dashboardContent').classList.remove('hidden');
                 initializeDashboard();
                 
             } catch (error) {
                 console.error('Erro ao processar arquivos:', error);
-                showStatus(`❌ Erro ao processar arquivos: ${error.message}`, 'error');
+                showStatus(`Erro ao processar arquivos: ${error.message}`, 'error');
             }
         }
 
@@ -717,10 +1090,6 @@
                         const sheet = workbook.Sheets[workbook.SheetNames[0]];
                         const data = XLSX.utils.sheet_to_json(sheet, { header: 1 });
                         
-                        // Os headers estão na linha 2 (índice 2)
-                        const headers = data[2];
-                        
-                        // Os dados começam na linha 3 (índice 3)
                         const transactions = [];
                         let totalUSD = 0;
                         let totalBRL = 0;
@@ -825,7 +1194,7 @@
             const totalBRL = months.reduce((sum, month) => sum + data.monthlyTotals[month].brl, 0);
             const avgTicket = totalBRL / totalTransactions;
 
-            document.getElementById('total-transactions').textContent = totalTransactions;
+            document.getElementById('total-transactions').textContent = totalTransactions.toLocaleString();
             document.getElementById('total-usd').textContent = formatCurrency(totalUSD, 'USD');
             document.getElementById('total-brl').textContent = formatCurrency(totalBRL);
             document.getElementById('avg-ticket').textContent = formatCurrency(avgTicket);
@@ -838,21 +1207,22 @@
             Object.keys(data.monthlyTotals).forEach((month, index) => {
                 const totals = data.monthlyTotals[month];
                 const card = document.createElement('div');
-                card.className = 'card';
+                card.className = 'info-card';
+                card.style.animationDelay = `${index * 0.1}s`;
                 
                 card.innerHTML = `
-                    <h3>📅 ${month}</h3>
-                    <div class="metric">
-                        <span><strong>Transações:</strong></span>
-                        <span class="value">${totals.transacoes}</span>
+                    <h3 class="card-title">📅 ${month}</h3>
+                    <div class="card-metric">
+                        <span class="metric-name">Transações</span>
+                        <span class="metric-amount">${totals.transacoes}</span>
                     </div>
-                    <div class="metric">
-                        <span><strong>Total USD:</strong></span>
-                        <span class="value">${formatCurrency(totals.usd, 'USD')}</span>
+                    <div class="card-metric">
+                        <span class="metric-name">Total USD</span>
+                        <span class="metric-amount">${formatCurrency(totals.usd, 'USD')}</span>
                     </div>
-                    <div class="metric">
-                        <span><strong>Total BRL:</strong></span>
-                        <span class="value">${formatCurrency(totals.brl)}</span>
+                    <div class="card-metric">
+                        <span class="metric-name">Total BRL</span>
+                        <span class="metric-amount">${formatCurrency(totals.brl)}</span>
                     </div>
                 `;
                 
@@ -881,34 +1251,34 @@
                     datasets: [{
                         label: 'Gastos em BRL',
                         data: brlData,
-                        backgroundColor: months.map((_, i) => `hsl(${(i * 360 / months.length)}, 70%, 60%)`),
-                        borderColor: months.map((_, i) => `hsl(${(i * 360 / months.length)}, 70%, 40%)`),
-                        borderWidth: 2
+                        backgroundColor: 'rgba(139, 3, 4, 0.8)',
+                        borderColor: '#8b0304',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
-                        }
+                        legend: { display: false }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
+                            grid: { color: 'rgba(139, 3, 4, 0.1)' },
                             ticks: {
-                                callback: function(value) {
-                                    return formatCurrency(value);
-                                }
+                                callback: function(value) { return formatCurrency(value); },
+                                color: '#666666'
                             }
                         },
                         x: {
-                            ticks: {
-                                maxRotation: 45
-                            }
+                            grid: { display: false },
+                            ticks: { color: '#666666' }
                         }
-                    }
+                    },
+                    animation: { duration: 2000, easing: 'easeOutBounce' }
                 }
             });
         }
@@ -929,13 +1299,22 @@
                 }, 0);
             });
 
+            // Generate shades of red for categories
+            const redShades = categories.map((_, i) => {
+                const intensity = 0.5 + (i * 0.5 / categories.length);
+                return `rgba(139, 3, 4, ${intensity})`;
+            });
+
             charts.category = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: categories,
                     datasets: [{
                         data: categoryTotals,
-                        backgroundColor: categories.map((_, i) => `hsl(${(i * 360 / categories.length)}, 70%, 60%)`)
+                        backgroundColor: redShades,
+                        borderColor: '#ffffff',
+                        borderWidth: 3,
+                        hoverBorderWidth: 5
                     }]
                 },
                 options: {
@@ -943,9 +1322,11 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            position: 'bottom'
+                            position: 'bottom',
+                            labels: { padding: 20, usePointStyle: true, color: '#666666' }
                         }
-                    }
+                    },
+                    animation: { animateRotate: true, duration: 2000 }
                 }
             });
         }
@@ -963,15 +1344,25 @@
                     datasets: [{
                         label: 'USD',
                         data: months.map(month => data.monthlyTotals[month].usd),
-                        borderColor: '#27ae60',
-                        backgroundColor: 'rgba(39, 174, 96, 0.1)',
-                        tension: 0.4
+                        borderColor: '#8b0304',
+                        backgroundColor: 'rgba(139, 3, 4, 0.1)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#8b0304',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
                     }, {
                         label: 'BRL',
                         data: months.map(month => data.monthlyTotals[month].brl),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.4
+                        borderColor: 'rgba(139, 3, 4, 0.6)',
+                        backgroundColor: 'rgba(139, 3, 4, 0.05)',
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointBackgroundColor: 'rgba(139, 3, 4, 0.6)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6
                     }]
                 },
                 options: {
@@ -979,14 +1370,19 @@
                     maintainAspectRatio: false,
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: { color: 'rgba(139, 3, 4, 0.1)' },
+                            ticks: { color: '#666666' }
                         },
                         x: {
-                            ticks: {
-                                maxRotation: 45
-                            }
+                            grid: { color: 'rgba(139, 3, 4, 0.05)' },
+                            ticks: { color: '#666666' }
                         }
-                    }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#666666', usePointStyle: true } }
+                    },
+                    animation: { duration: 2000, easing: 'easeInOutQuart' }
                 }
             });
         }
@@ -1004,29 +1400,29 @@
                     datasets: [{
                         label: 'Número de Transações',
                         data: months.map(month => data.monthlyTotals[month].transacoes),
-                        backgroundColor: months.map((_, i) => `hsl(${(i * 360 / months.length + 180) % 360}, 70%, 60%)`),
-                        borderColor: months.map((_, i) => `hsl(${(i * 360 / months.length + 180) % 360}, 70%, 40%)`),
-                        borderWidth: 2
+                        backgroundColor: 'rgba(139, 3, 4, 0.7)',
+                        borderColor: '#8b0304',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
+                    plugins: { legend: { display: false } },
                     scales: {
                         y: {
-                            beginAtZero: true
+                            beginAtZero: true,
+                            grid: { color: 'rgba(139, 3, 4, 0.1)' },
+                            ticks: { color: '#666666' }
                         },
                         x: {
-                            ticks: {
-                                maxRotation: 45
-                            }
+                            grid: { display: false },
+                            ticks: { color: '#666666' }
                         }
-                    }
+                    },
+                    animation: { duration: 2000, easing: 'easeOutBounce' }
                 }
             });
         }
@@ -1057,7 +1453,6 @@
                 categoryFilter.appendChild(option);
             });
 
-            // Event listeners para filtros
             document.getElementById('monthFilter').addEventListener('change', filterTransactions);
             document.getElementById('categoryFilter').addEventListener('change', filterTransactions);
             document.getElementById('searchFilter').addEventListener('input', filterTransactions);
@@ -1081,7 +1476,7 @@
                     <td>${transaction.profissional}</td>
                     <td>${transaction.data}</td>
                     <td>${transaction.movimentacao}</td>
-                    <td><span style="background: #3498db; color: white; padding: 3px 8px; border-radius: 12px; font-size: 0.8em;">${category}</span></td>
+                    <td><span class="category-tag">${category}</span></td>
                     <td>${transaction.valorUSD ? formatCurrency(transaction.valorUSD, 'USD') : '-'}</td>
                     <td>${transaction.valorBRL ? formatCurrency(transaction.valorBRL) : '-'}</td>
                     <td>${transaction.relatorio || '-'}</td>
@@ -1107,7 +1502,7 @@
             renderTransactionsTable();
         }
 
-        // Adicionar um arquivo inicial
+        // Initialize with first file item
         addFileItem();
     </script>
 </body>
